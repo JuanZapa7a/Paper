@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}     
+
+\geometry{a4paper}  
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{My Document}
+\fancyhead[R]{\thepage}   
+\fancyfoot[C]{Confidential} 
+
+
+
+\title{My First LaTeX Document}
+\author{John Doe}
+\date{\today}     
+
+
+
+\begin{document}    
+
+
+\maketitle  
+\tableofcontents
+\newpage
+\section{Introduction}
+This is my first document created using \LaTeX. I am learning how to format text
+
+
+, create sections, and include mathematical equations.
+
+
+
+
+\section{Mathematical Equations}
+
+
+Here is an example of a mathematical equation:
+\begin{equation}
+E = mc^2
+\end{equation}
+
+This equation represents the equivalence of energy (E) and mass (m) with c being
+the speed of light in a vacuum.
+
+
+\section{Including Images}
+You can also include images in your document. Here is an example:
+
+\begin{figure}[h!]    
+\centering
+\includegraphics[width=0.5\textwidth]{example-image}
+\caption{An example image}
+\label{fig:example}
+\end{figure}
+As shown in Figure \ref{fig:example}, images can be easily added to your document.
+
+\section{Conclusion}
+This document serves as a basic introduction to \LaTeX. With practice, you can create
+more complex documents including reports, articles, and books.
+
+
+\end{document}
