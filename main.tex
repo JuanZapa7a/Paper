@@ -69,8 +69,7 @@ Beyond numerical metrics, we qualitatively examine typical failure modes (small 
 %\newpage
 
 
-\section{Introduction} 
-\label{sec:introduction}
+\section{Introduction}\label{sec:introduction}
 
 Ischemic stroke remains a leading cause of death and long-term disability worldwide, imposing substantial clinical and economic burdens on healthcare systems. Rapid and accurate identification of ischemic lesions is critical to guide acute management and rehabilitation planning. In routine clinical practice, Fluid-Attenuated Inversion Recovery (FLAIR) MRI is frequently acquired because it enhances the conspicuity of edema and chronic infarcts without the need for intravenous contrast. Its wide availability across scanners and centers makes FLAIR an attractive input for automated analysis pipelines.
 
@@ -86,8 +85,7 @@ Beyond aggregate Dice and IoU scores, we analyze robustness across lesion sizes 
 
 The remainder of the manuscript is organized as follows. Section~\ref{sec:relatedwork} reviews related work; Section~\ref{sec:methodology} describes dataset preparation and model implementations; Section~\ref{sec:results} presents quantitative and qualitative results; Section~\ref{sec:discussion} discusses implications, limitations and future directions; and Section~\ref{sec:conclusion} concludes.
 
-\section{Related Work} 
-\label{sec:relatedwork}
+\section{Related Work}\label{sec:relatedwork}
 
 % Original Related Work preserved below for reference (commented):
 % Medical image segmentation has been a focal point of research for several decades, with significant advancements driven by both classical image processing techniques and the more recent adoption of deep learning methodologies. This section provides an overview of the key developments in this field, highlighting the evolution from traditional methods to state-of-the-art deep learning architectures.
@@ -136,13 +134,11 @@ Practical challenges remain: cross‑site generalization, domain shift and limit
 Taken together, the literature supports a pragmatic strategy: select self‑configuring volumetric frameworks (e.g., nnU‑Net) when accuracy and robustness are priorities; consider lightweight 2D/real‑time variants for speed‑critical screening, and always accompany deployment with rigorous cross‑site validation, careful preprocessing (resampling, intensity normalization) and task‑aware evaluation~\cite{Isensee2021,liFullyConvolutionalNetwork2018,Menze2015}.
 
 
-\section{Methodology} 
-\label{sec:methodology}
+\section{Methodology}\label{sec:methodology}
 
 This section describes the dataset, the shared preprocessing pipeline, the implemented models and training procedures, the evaluation protocol, and the reproducibility measures adopted. The presentation is compact yet sufficiently detailed for replication in a scientific context.
 
-\subsection{Dataset} 
-\label{subsec:dataset}
+\subsection{Dataset}\label{subsec:dataset}
 
 The experiments were conducted using the publicly available ISLES 2022~\cite{liewLargeCuratedOpensource2021} (Ischemic Stroke Lesion Segmentation) dataset, developed as part of the international MICCAI challenge. The dataset contains 250 multimodal MRI cases from patients diagnosed with ischemic stroke, each accompanied by manually annotated lesion masks created by expert radiologists. Every case includes several MRI sequences—Dif\-fusion-Weighted Imaging (DWI), Apparent Diffusion Coefficient (ADC), and Fluid-Attenua\-ted Inversion Recovery (FLAIR)—which capture complementary physiological information of the infarcted tissue.
 
@@ -152,7 +148,7 @@ For this study, only the FLAIR sequence was used as model input and the expert l
 
 %All experiments were conducted using Python-based frameworks for deep learning and medical image processing. Training was performed on a GPU-equipped environment (NVIDIA Tesla T4) to ensure efficient execution of 3D convolutional networks. The implementations relied on TensorFlow/Keras for U-Net, nnU-Net for the self-configuring model, and the Ultralytics framework for YOLOv8. The setup ensured full reproducibility across experiments.
 
-\subsection{Model Architectures and Training Procedures} \label{subsec:models}
+\subsection{Model Architectures and Training Procedures}\label{subsec:models}
 
 All experiments were conducted using Python-based frameworks for deep learning and medical image processing. Training was performed on a GPU-equipped environment (NVIDIA Tesla T4) to ensure efficient execution of 3D convolutional networks. The implementations relied on TensorFlow/Keras for U-Net~\cite{ronnebergerUNetConvolutionalNetworks2015,Zhou2018}, nnU-Net~\cite{isenseeAbstractNnUNetSelfadapting2019} for the self-configuring model, and the Ultralytics framework for YOLOv8~\cite{jocherUltralyticsYolov5V702022}. The setup ensured full reproducibility across experiments.
 %
@@ -184,54 +180,53 @@ Each model was independently trained using the same dataset split, preprocessed 
 % \end{table}
 
 \begin{table}[tp]
-\centering
-\caption{Comparison of U-Net, nnU-Net, and YOLOv8 Parameters}
-\label{tab:model_comparison}
-\begin{tabularx}{\textwidth}{@{} l l X @{}}
-\toprule
-Parameter & Model & Setting \\
-\midrule
-\multirow{3}{*}{Input Type} 
-  & U-Net    & 3D (192×192×64) \\
-  & nnU-Net  & 3D full-resolution \\
-  & YOLOv8   & 2D slices (reconstructed to 3D) \\
-\addlinespace
-\multirow{3}{*}{Configuration Type} 
-  & U-Net    & Manual \\
-  & nnU-Net  & Automatic (self-configuring) \\
-  & YOLOv8   & Default (Ultralytics) \\
-\addlinespace
-\multirow{3}{*}{Optimizer} 
-  & U-Net    & Adam (lr = 1e$^{-4}$) \\
-  & nnU-Net  & SGD + momentum (nnU‑Net default) \\
-  & YOLOv8   & Ultralytics default optimizer \\
-\addlinespace
-\multirow{3}{*}{Loss Function} 
-  & U-Net    & BCE + Dice (0.5/0.5) \\
-  & nnU-Net  & Soft Dice + Cross‑Entropy (default) \\
-  & YOLOv8   & Segmentation loss (framework default) \\
-\addlinespace
-\multirow{3}{*}{Epochs / Stopping} 
-  & U-Net    & up to 100 (early stopping; stopped at 24) \\
-  & nnU-Net  & default schedule (representative run: 141) \\
-  & YOLOv8   & up to 100 (representative stop ~50) \\
-\addlinespace
-\multirow{3}{*}{Batch Size} 
-  & U-Net    & 1 (GPU constrained) \\
-  & nnU-Net  & patch‑based (automatic) \\
-  & YOLOv8   & 8 (tuned to GPU memory) \\
-\addlinespace
-\multirow{3}{*}{Data Augmentation} 
-  & U-Net    & flips, rotations (±15°), elastic, intensity jitter \\
-  & nnU-Net  & extensive automatic augmentations (spatial/intensity) \\
-  & YOLOv8   & flips, rotations, contrast/brightness adjustments \\
-\addlinespace
-\multirow{3}{*}{Evaluation Metrics} 
-  & U-Net    & Dice, IoU \\
-  & nnU-Net  & Dice, IoU \\
-  & YOLOv8   & Dice, IoU, detection metrics (precision/recall/mAP) \\
-\bottomrule
-\end{tabularx}
+  \centering
+  \caption{Comparison of U-Net, nnU-Net, and YOLOv8 Parameters}\label{tab:model_comparison}
+    \begin{tabularx}{\textwidth}{@{} l l X @{}}
+      \toprule
+        Parameter & Model & Setting \\
+      \midrule
+        \multirow{3}{*}{Input Type} 
+          & U-Net    & 3D (192×192×64) \\
+          & nnU-Net  & 3D full-resolution \\
+          & YOLOv8   & 2D slices (reconstructed to 3D) \\
+      \addlinespace
+        \multirow{3}{*}{Configuration Type} 
+          & U-Net    & Manual \\
+          & nnU-Net  & Automatic (self-configuring) \\
+          & YOLOv8   & Default (Ultralytics) \\
+      \addlinespace
+        \multirow{3}{*}{Optimizer} 
+          & U-Net    & Adam (lr = 1e$^{-4}$) \\
+          & nnU-Net  & SGD + momentum (nnU‑Net default) \\
+          & YOLOv8   & Ultralytics default optimizer \\
+      \addlinespace
+        \multirow{3}{*}{Loss Function} 
+          & U-Net    & BCE + Dice (0.5/0.5) \\
+          & nnU-Net  & Soft Dice + Cross‑Entropy (default) \\
+          & YOLOv8   & Segmentation loss (framework default) \\
+      \addlinespace
+        \multirow{3}{*}{Epochs / Stopping} 
+          & U-Net    & up to 100 (early stopping; stopped at 24) \\
+          & nnU-Net  & default schedule (representative run: 141) \\
+          & YOLOv8   & up to 100 (representative stop ~50) \\
+      \addlinespace
+        \multirow{3}{*}{Batch Size} 
+          & U-Net    & 1 (GPU constrained) \\
+          & nnU-Net  & patch‑based (automatic) \\
+          & YOLOv8   & 8 (tuned to GPU memory) \\
+      \addlinespace
+        \multirow{3}{*}{Data Augmentation} 
+          & U-Net    & flips, rotations (±15°), elastic, intensity jitter \\
+          & nnU-Net  & extensive automatic augmentations (spatial/intensity) \\
+          & YOLOv8   & flips, rotations, contrast/brightness adjustments \\
+      \addlinespace
+        \multirow{3}{*}{Evaluation Metrics} 
+          & U-Net    & Dice, IoU \\
+          & nnU-Net  & Dice, IoU \\
+          & YOLOv8   & Dice, IoU, detection metrics (precision/recall/mAP) \\
+      \bottomrule
+  \end{tabularx}
 \end{table}
 
 
@@ -297,13 +292,11 @@ Both metrics were computed on the test set for each model. Higher values indicat
 
 
 
-\section{Results} 
-\label{sec:results}
+\section{Results}\label{sec:results}
 
 This section presents the quantitative and qualitative results obtained from the three segmentation models: U-Net, nnU-Net, and YOLOv8. Performance metrics include Dice coefficient, Intersection over Union (IoU), and, in the case of YOLOv8, precision, recall, and mean Average Precision (mAP). Figures and tables illustrate representative outcomes and training behaviors.
 
-\subsection{U-Net Results} 
-\label{subsec:unet}
+\subsection{U-Net Results}\label{subsec:unet}
 
 The 3D U-Net training was automatically stopped after 24 epochs due to the early stopping criterion, as shown in Figure~\ref{fig:unet_loss_curve}, which depicts the training loss curve. The validation Dice coefficient increased steadily before reaching a stable value around epoch 20. Quantitative results for the test set are summarized in Table~\ref{tab:unet_metrics}.
 %
@@ -336,8 +329,7 @@ Qualitative examples of the model outputs are presented in Figure~\ref{fig:unet_
 \end{figure}
 
 
-\subsection{nnU-Net Results} 
-\label{subsec:nnu-net}  
+\subsection{nnU-Net Results}\label{subsec:nnu-net}  
 
 The nnU-Net model was trained for 141 epochs, with training and validation loss curves shown in Figure \ref{fig:nnu-net_loss_curve}. The validation Dice coefficient improved consistently, stabilizing around epoch 120. Test set results are summarized in Table \ref{tab:nnunet_metrics}.
 %
