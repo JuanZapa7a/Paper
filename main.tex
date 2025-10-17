@@ -12,7 +12,7 @@
 \usepackage{geometry}           % Márgenes
 \geometry{a4paper, margin=2.5cm}
 \usepackage{color}              % Colores 
-%\usepackage{qrcode}             % Código QR  
+\usepackage{siunitx}            % SI units  
 
 \usepackage{csquotes}
 %\usepackage[style=numeric,sorting=none]{biblatex}
@@ -69,13 +69,14 @@ Beyond numerical metrics, we qualitatively examine typical failure modes (small 
 %\newpage
 
 
-\section{Introduction} \label{sec:introduction}
+\section{Introduction} 
+\label{sec:introduction}
 
 Ischemic stroke remains a leading cause of death and long-term disability worldwide, imposing substantial clinical and economic burdens on healthcare systems. Rapid and accurate identification of ischemic lesions is critical to guide acute management and rehabilitation planning. In routine clinical practice, Fluid-Attenuated Inversion Recovery (FLAIR) MRI is frequently acquired because it enhances the conspicuity of edema and chronic infarcts without the need for intravenous contrast. Its wide availability across scanners and centers makes FLAIR an attractive input for automated analysis pipelines.
 
 However, FLAIR images pose considerable challenges for automated interpretation. Lesions can be small and highly heterogeneous in intensity and shape, and their appearance is often confounded by age-related white matter hyperintensities, motion artifacts, and scanner-dependent variations. These factors limit the effectiveness of traditional intensity-based and handcrafted-feature methods, which are sensitive to imaging artifacts and anatomical variability. In addition, the relative scarcity of large, well-annotated ischemic stroke datasets—particularly for FLAIR sequences—constrains the generalization of classical pipelines.
 
-Deep learning (DL), especially convolutional neural networks (CNNs), has substantially advanced medical image segmentation by learning hierarchical features directly from data, reducing the need for manual feature engineering. Architectures such as U-Net and its 3D variants are widely used baselines, while frameworks like nnU-Net demonstrate that automated protocol selection and self-configuration frequently outperform manually tuned pipelines on heterogeneous medical datasets \cite{Isensee2021}. Concurrently, lightweight and real-time capable models originally developed for natural images (for example, recent YOLO variants) have been adapted for segmentation tasks, offering favourable inference speed that can be important in time-sensitive clinical workflows.
+Deep learning (DL), especially convolutional neural networks (CNNs), has substantially advanced medical image segmentation by learning hierarchical features directly from data, reducing the need for manual feature engineering. Architectures such as U-Net and its 3D variants are widely used baselines, while frameworks like nnU-Net demonstrate that automated protocol selection and self-configuration frequently outperform manually tuned pipelines on heterogeneous medical datasets~\cite{Isensee2021}. Concurrently, lightweight and real-time capable models originally developed for natural images (for example, recent YOLO variants) have been adapted for segmentation tasks, offering favourable inference speed that can be important in time-sensitive clinical workflows.
 
 Despite these advances, controlled comparisons across fundamentally different paradigms—manual 3D models, self-configuring medical frameworks, and adapted 2D real-time models—are limited for ischemic stroke segmentation on non-contrast FLAIR data. Understanding trade-offs between accuracy, robustness and inference efficiency in clinically realistic settings requires systematic evaluation under matched preprocessing and evaluation protocols.
 
@@ -83,9 +84,10 @@ In this work, we present a reproducible and controlled comparison of three repre
 
 Beyond aggregate Dice and IoU scores, we analyze robustness across lesion sizes and types, characterize common failure modes (for example, missed peripheral lesions and over-segmentation near white-matter hyperintensities), and measure inference efficiency to inform practical deployment trade-offs. Our main contributions are: (i) a controlled empirical comparison of three complementary segmentation paradigms on FLAIR stroke data; (ii) a detailed analysis of preprocessing and training choices that materially affect performance and generalization; and (iii) pragmatic recommendations for integrating automated segmentation into clinical or research workflows, balancing accuracy, robustness and computational cost.
 
-The remainder of the manuscript is organized as follows. Section \ref{sec:relatedwork} reviews related work; Section \ref{sec:methodology} describes dataset preparation and model implementations; Section \ref{sec:results} presents quantitative and qualitative results; Section \ref{sec:discussion} discusses implications, limitations and future directions; and Section \ref{sec:conclusion} concludes.
+The remainder of the manuscript is organized as follows. Section~\ref{sec:relatedwork} reviews related work; Section~\ref{sec:methodology} describes dataset preparation and model implementations; Section~\ref{sec:results} presents quantitative and qualitative results; Section~\ref{sec:discussion} discusses implications, limitations and future directions; and Section~\ref{sec:conclusion} concludes.
 
-\section{Related Work} \label{sec:relatedwork}
+\section{Related Work} 
+\label{sec:relatedwork}
 
 % Original Related Work preserved below for reference (commented):
 % Medical image segmentation has been a focal point of research for several decades, with significant advancements driven by both classical image processing techniques and the more recent adoption of deep learning methodologies. This section provides an overview of the key developments in this field, highlighting the evolution from traditional methods to state-of-the-art deep learning architectures.
@@ -121,26 +123,28 @@ The remainder of the manuscript is organized as follows. Section \ref{sec:relate
 %The present study addresses these gaps by conducting a comparative analysis of U-Net, nnU-Net, and YOLOv8 for ischemic stroke lesion segmentation using FLAIR MRI. Although trained on a relatively small dataset, the results indicate that these models can achieve competitive performance. This suggests that even with limited annotated data, reliable automated segmentation is feasible. Furthermore, findings may be extrapolated to larger datasets in the future. By evaluating YOLOv8 alongside established medical architectures, this work contributes new insights into the potential of real-time segmentation methods in clinical imaging workflows, offering a perspective on how efficiency and accuracy can be balanced for practical applications.
 
 % Reordered and reintegrated Related Work (single block, original text remains commented above):
-Medical image segmentation has progressed from classical intensity‑ and model‑based techniques to modern data‑driven methods that learn hierarchical features end‑to‑end. Early approaches such as thresholding, region growing, deformable models and clustering were useful but are limited in the presence of low contrast, anatomical variability and scanner artifacts that commonly affect brain FLAIR images. In FLAIR specifically, region‑growing and level‑set (active contour) methods were historically applied to delineate hyperintense lesions, but they relied on manual seeding and careful parameter tuning that limited automation and generalization \cite{qianActiveContourModel2013,steinStatisticalDeformableModel2001}. Classical machine learning (SVMs, random forests) improved performance by leveraging handcrafted features (texture, intensity histograms, gradients), but these pipelines remain dependent on feature design and struggle to scale to volumetric, high‑dimensional data without extensive engineering \cite{geremiaSpatialDecisionForests2011}. The advent of convolutional neural networks enabled end‑to‑end dense prediction and a leap in performance: U‑Net and its volumetric extensions provided robust baselines for medical segmentation, while architectural advances (residual blocks, attention gates, multiscale 3D designs) further improved localization of small and diffuse lesions \cite{ronnebergerUNetConvolutionalNetworks2015,oktayAttentionUNetLearning2018,He2016,Milletari2016}.
+Medical image segmentation has progressed from classical intensity‑ and model‑based techniques to modern data‑driven methods that learn hierarchical features end‑to‑end. Early approaches such as thresholding, region growing, deformable models and clustering were useful but are limited in the presence of low contrast, anatomical variability and scanner artifacts that commonly affect brain FLAIR images. In FLAIR specifically, region‑growing and level‑set (active contour) methods were historically applied to delineate hyperintense lesions, but they relied on manual seeding and careful parameter tuning that limited automation and generalization~\cite{qianActiveContourModel2013,steinStatisticalDeformableModel2001}. Classical machine learning (SVMs, random forests) improved performance by leveraging handcrafted features (texture, intensity histograms, gradients), but these pipelines remain dependent on feature design and struggle to scale to volumetric, high‑dimensional data without extensive engineering~\cite{geremiaSpatialDecisionForests2011}. The advent of convolutional neural networks enabled end‑to‑end dense prediction and a leap in performance: U‑Net and its volumetric extensions provided robust baselines for medical segmentation, while architectural advances (residual blocks, attention gates, multiscale 3D designs) further improved localization of small and diffuse lesions~\cite{ronnebergerUNetConvolutionalNetworks2015,oktayAttentionUNetLearning2018,He2016,Milletari2016}.
 
-Benchmark challenges and public datasets have driven reproducible progress but also expose key limitations: annotated ischemic stroke collections—especially FLAIR‑only datasets—are relatively small, cross‑site variability persists, and few studies compare fundamentally different paradigms under matched preprocessing and evaluation protocols. Notably, the BRATS challenge established a widely used benchmark for brain tumor segmentation and helped standardize metrics and evaluation practices across studies \cite{Menze2015}. However, dataset challenges (e.g., BRATS and the ISLES series) have been central to progress in brain lesion segmentation, providing standardized data, metrics and leaderboards that enable reproducible comparison and expose the limitations of intensity‑based approaches \cite{Menze2015}. These benchmarks highlighted early on that classical image processing techniques—thresholding, region growing, clustering, active contours and graph cuts—are often insufficient for heterogeneous clinical MRI due to low contrast, motion artefacts and scanner variability \cite{qianActiveContourModel2013,steinStatisticalDeformableModel2001,boykovInteractiveGraphCuts2001}. 
+Benchmark challenges and public datasets have driven reproducible progress but also expose key limitations: annotated ischemic stroke collections—especially FLAIR‑only datasets—are relatively small, cross‑site variability persists, and few studies compare fundamentally different paradigms under matched preprocessing and evaluation protocols. Notably, the BRATS challenge established a widely used benchmark for brain tumor segmentation and helped standardize metrics and evaluation practices across studies~\cite{Menze2015}. However, dataset challenges (e.g., BRATS and the ISLES series) have been central to progress in brain lesion segmentation, providing standardized data, metrics and leaderboards that enable reproducible comparison and expose the limitations of intensity‑based approaches~\cite{Menze2015}. These benchmarks highlighted early on that classical image processing techniques—thresholding, region growing, clustering, active contours and graph cuts—are often insufficient for heterogeneous clinical MRI due to low contrast, motion artefacts and scanner variability~\cite{qianActiveContourModel2013,steinStatisticalDeformableModel2001,boykovInteractiveGraphCuts2001}. 
 
-Deep learning—particularly convolutional neural networks—enabled a step change by providing end‑to‑end dense prediction. Architectures such as U‑Net (and its 3D variants) became standard baselines; residual and attention extensions and multiscale 3D designs further improved localization and robustness. Frameworks like nnU‑Net have shown that automated configuration of preprocessing, patch size and training schedules often outperforms manual tuning across heterogeneous medical tasks. Ensemble and multiscale strategies (e.g., DeepMedic, V‑Net) remain powerful when spatial context and postprocessing priors are integrated. Recently, general‑purpose, real‑time oriented models (notably YOLO‑family adaptations) and attention‑augmented detectors have been adapted to stroke imaging to enable rapid triage and real‑time screening; these approaches trade some voxel‑level precision for inference speed and often require domain‑specific losses and 3D reassembly to produce clinically useful volumetric masks \cite{chenAutomaticDetectionStroke2022,chenMSAYOLOv5MultiscaleAttentionbased2023,gheibiCNNResDeepLearning2023}. Hybrid strategies that combine 2D speed with 3D refinement appear promising for clinical pipelines that demand both quick turnaround and spatial accuracy. 
+Deep learning—particularly convolutional neural networks—enabled a step change by providing end‑to‑end dense prediction. Architectures such as U‑Net (and its 3D variants) became standard baselines; residual and attention extensions and multiscale 3D designs further improved localization and robustness. Frameworks like nnU‑Net have shown that automated configuration of preprocessing, patch size and training schedules often outperforms manual tuning across heterogeneous medical tasks. Ensemble and multiscale strategies (e.g., DeepMedic, V‑Net) remain powerful when spatial context and postprocessing priors are integrated. Recently, general‑purpose, real‑time oriented models (notably YOLO‑family adaptations) and attention‑augmented detectors have been adapted to stroke imaging to enable rapid triage and real‑time screening; these approaches trade some voxel‑level precision for inference speed and often require domain‑specific losses and 3D reassembly to produce clinically useful volumetric masks~\cite{chenAutomaticDetectionStroke2022,chenMSAYOLOv5MultiscaleAttentionbased2023,gheibiCNNResDeepLearning2023}. Hybrid strategies that combine 2D speed with 3D refinement appear promising for clinical pipelines that demand both quick turnaround and spatial accuracy. 
 
-Beyond architecture design, algorithmic pipelines matured along two complementary axes. First, multiscale 3D networks and ensemble strategies (DeepMedic, V‑Net and their variants) integrated spatial context and postprocessing priors to improve lesion continuity and reduce false positives \cite{kamnitsasEfficientMultiscale3D2017,Milletari2016,liFullyConvolutionalNetwork2018}. Second, meta‑frameworks such as nnU‑Net automated many engineering choices (preprocessing, patch size, normalization and training schedules), often matching or exceeding manually tuned systems across diverse datasets \cite{Isensee2021,isenseeAbstractNnUNetSelfadapting2019}.
+Beyond architecture design, algorithmic pipelines matured along two complementary axes. First, multiscale 3D networks and ensemble strategies (DeepMedic, V‑Net and their variants) integrated spatial context and postprocessing priors to improve lesion continuity and reduce false positives~\cite{kamnitsasEfficientMultiscale3D2017,Milletari2016,liFullyConvolutionalNetwork2018}. Second, meta‑frameworks such as nnU‑Net automated many engineering choices (preprocessing, patch size, normalization and training schedules), often matching or exceeding manually tuned systems across diverse datasets~\cite{Isensee2021,isenseeAbstractNnUNetSelfadapting2019}.
 
-Practical challenges remain: cross‑site generalization, domain shift and limited annotated FLAIR‑only collections constrain model robustness. Work on domain adaptation and adversarial learning, and evaluations on multi‑center datasets, addresses these issues but add complexity to training and validation workflows \cite{Kamnitsas2017DA,Karani2018}. Survey articles and methodological reviews synthesize these findings and emphasize the need for larger, well‑curated datasets, standardized metrics (Dice, IoU) and transparent reporting of detection versus segmentation performance and uncertainty estimates \cite{Litjens2017,minaeeImageSegmentationUsing2021,liuReviewDeepLearningBasedMedical2021,TahaHanbury2015}.
+Practical challenges remain: cross‑site generalization, domain shift and limited annotated FLAIR‑only collections constrain model robustness. Work on domain adaptation and adversarial learning, and evaluations on multi‑center datasets, addresses these issues but add complexity to training and validation workflows~\cite{Kamnitsas2017DA,Karani2018}. Survey articles and methodological reviews synthesize these findings and emphasize the need for larger, well‑curated datasets, standardized metrics (Dice, IoU) and transparent reporting of detection versus segmentation performance and uncertainty estimates~\cite{Litjens2017,minaeeImageSegmentationUsing2021,liuReviewDeepLearningBasedMedical2021,TahaHanbury2015}.
 
-Taken together, the literature supports a pragmatic strategy: select self‑configuring volumetric frameworks (e.g., nnU‑Net) when accuracy and robustness are priorities; consider lightweight 2D/real‑time variants for speed‑critical screening, and always accompany deployment with rigorous cross‑site validation, careful preprocessing (resampling, intensity normalization) and task‑aware evaluation \cite{Isensee2021,liFullyConvolutionalNetwork2018,Menze2015}.
+Taken together, the literature supports a pragmatic strategy: select self‑configuring volumetric frameworks (e.g., nnU‑Net) when accuracy and robustness are priorities; consider lightweight 2D/real‑time variants for speed‑critical screening, and always accompany deployment with rigorous cross‑site validation, careful preprocessing (resampling, intensity normalization) and task‑aware evaluation~\cite{Isensee2021,liFullyConvolutionalNetwork2018,Menze2015}.
 
 
-\section{Methodology} \label{sec:methodology}
+\section{Methodology} 
+\label{sec:methodology}
 
 This section describes the dataset, the shared preprocessing pipeline, the implemented models and training procedures, the evaluation protocol, and the reproducibility measures adopted. The presentation is compact yet sufficiently detailed for replication in a scientific context.
 
-\subsection{Dataset} \label{subsec:dataset}
+\subsection{Dataset} 
+\label{subsec:dataset}
 
-The experiments were conducted using the publicly available ISLES 2022 \cite{liewLargeCuratedOpensource2021} (Ischemic Stroke Lesion Segmentation) dataset, developed as part of the international MICCAI challenge. The dataset contains 250 multimodal MRI cases from patients diagnosed with ischemic stroke, each accompanied by manually annotated lesion masks created by expert radiologists. Every case includes several MRI sequences—Dif\-fusion-Weighted Imaging (DWI), Apparent Diffusion Coefficient (ADC), and Fluid-Attenua\-ted Inversion Recovery (FLAIR)—which capture complementary physiological information of the infarcted tissue.
+The experiments were conducted using the publicly available ISLES 2022~\cite{liewLargeCuratedOpensource2021} (Ischemic Stroke Lesion Segmentation) dataset, developed as part of the international MICCAI challenge. The dataset contains 250 multimodal MRI cases from patients diagnosed with ischemic stroke, each accompanied by manually annotated lesion masks created by expert radiologists. Every case includes several MRI sequences—Dif\-fusion-Weighted Imaging (DWI), Apparent Diffusion Coefficient (ADC), and Fluid-Attenua\-ted Inversion Recovery (FLAIR)—which capture complementary physiological information of the infarcted tissue.
 
 For this study, only the FLAIR sequence was used as model input and the expert lesion masks supplied by the challenge were treated as ground truth. FLAIR images suppress the cerebrospinal fluid (CSF) signal, enhancing the visibility of hyperintense regions that correspond to ischemic edema or infarction. This property makes FLAIR particularly suitable for the segmentation of small lesions, especially in subacute phases. Each image and its corresponding segmentation were provided in NIfTI format, which preserves the spatial and volumetric information of 3D neuroimaging data. To ensure consistency between the MRI volumes and their corresponding segmentation masks, a general preprocessing step was applied prior to model-specific procedures. The segmentation masks provided in the ISLES 2022 dataset did not always match the spatial dimensions of their respective FLAIR images, which could hinder the application of automated segmentation models. Therefore, a spatial resampling process was carried out to align each mask with its corresponding MRI volume. This adjustment was performed using nearest-neighbor interpolation, which assigns to each new voxel the value of the closest voxel in the original mask, thus preserving the discrete nature of the labeled regions and preventing the generation of invalid intermediate values. This preprocessing step was essential to guarantee the spatial coherence between input images and ground-truth segmentations, enabling consistent training and evaluation across all models. After this alignment, each model applied its own specific preprocessing pipeline, which is described in the corresponding subsections below.
 
@@ -150,11 +154,11 @@ For this study, only the FLAIR sequence was used as model input and the expert l
 
 \subsection{Model Architectures and Training Procedures} \label{subsec:models}
 
-All experiments were conducted using Python-based frameworks for deep learning and medical image processing. Training was performed on a GPU-equipped environment (NVIDIA Tesla T4) to ensure efficient execution of 3D convolutional networks. The implementations relied on TensorFlow/Keras for U-Net \cite{ronnebergerUNetConvolutionalNetworks2015,Zhou2018}, nnU-Net \cite{isenseeAbstractNnUNetSelfadapting2019} for the self-configuring model, and the Ultralytics framework for YOLOv8 %\cite{jocherUltralyticsYolov5V702022}. The setup ensured full reproducibility across experiments. 
+All experiments were conducted using Python-based frameworks for deep learning and medical image processing. Training was performed on a GPU-equipped environment (NVIDIA Tesla T4) to ensure efficient execution of 3D convolutional networks. The implementations relied on TensorFlow/Keras for U-Net~\cite{ronnebergerUNetConvolutionalNetworks2015,Zhou2018}, nnU-Net~\cite{isenseeAbstractNnUNetSelfadapting2019} for the self-configuring model, and the Ultralytics framework for YOLOv8~\cite{jocherUltralyticsYolov5V702022}. The setup ensured full reproducibility across experiments.
 %
 Therefore, three segmentation models were implemented and compared: U-Net, nnU-Net, and YOLOv8. These architectures were chosen to represent three complementary paradigms in medical image segmentation: a manually designed biomedical model, an automated self-configuring framework, and a general-purpose segmentation architecture adapted from object detection.
-
-Each model was independently trained using the same dataset split, preprocessed FLAIR volumes, and evaluation metrics to ensure a fair comparison. Training configurations are summarized in Table \ref{tab:model_comparison}.
+%
+Each model was independently trained using the same dataset split, preprocessed FLAIR volumes, and evaluation metrics to ensure a fair comparison. Training configurations are summarized in Table~\ref{tab:model_comparison}.
 
 
 % \begin{table}[tp]
@@ -235,11 +239,11 @@ Parameter & Model & Setting \\
 %\subsubsection{U-Net} \label{subsubsec:unet_arch}
 The U-Net architecture \cite{ronnebergerUNetConvolutionalNetworks2015} is a widely adopted convolutional neural network designed specifically for biomedical image segmentation. It consists of a contracting path (encoder) that captures context and a symmetric expanding path (decoder) that enables precise localization. The model was implemented using TensorFlow/Keras, following the original design with modifications to accommodate 3D volumetric data. Specifically, the encoder progressively downsamples the input through convolutional and max-pooling layers to extract hierarchical features, while the decoder reconstructs the segmentation map through upsampling and skip connections that fuse spatial details from the encoder with the decoder’s learned representations. This structure enables precise localization, particularly for small and irregular ischemic lesions.
 
-Before model training, all images underwent a standardized preprocessing pipeline to ensure consistency across the dataset. First, the volumes were spatially resampled to an isotropic resolution of 1×1×1 mm³ using linear interpolation for the MRI scans and nearest-neighbor interpolation for the segmentation masks to maintain their discrete labels. Then, each volume was intensity normalized using z-score normalization (subtracting the mean and dividing by the standard deviation) to standardize voxel intensities and facilitate model convergence. To ensure uniform input dimensions, all volumes were cropped or zero-padded to a fixed size of 192×192×64 voxels, centered around the brain region to preserve relevant anatomical information.
+Before model training, all images underwent a standardized preprocessing pipeline to ensure consistency across the dataset. First, the volumes were spatially resampled to an isotropic resolution of ($1 \times 1 \times 1 $) mm or \SI{1}{\milli\meter\cubed} using linear interpolation for the MRI scans and nearest-neighbor interpolation for the segmentation masks to maintain their discrete labels. Then, each volume was intensity normalized using z-score normalization (subtracting the mean and dividing by the standard deviation) to standardize voxel intensities and facilitate model convergence. To ensure uniform input dimensions, all volumes were cropped or zero-padded to a fixed size of $192 \times 192 \times 64$ voxels, centered around the brain region to preserve relevant anatomical information.
 
 During training, data augmentation was applied to increase variability and mitigate overfitting. Random 3D flips along spatial axes and in-plane rotations of up to ±15° were performed with equal probability, always applied consistently to both images and masks. The dataset was divided into training (80\%), validation (10\%), and test (10\%) subsets, ensuring that patient cases did not overlap across partitions.
 
-The 3D U-Net was configured with convolutional blocks consisting of two 3×3×3 convolutions followed by batch normalization and ReLU activation. The encoder comprised four levels with 64, 128, 256, and 512 filters, and the bottleneck used 1024 filters. The decoder mirrored this configuration with deconvolutional layers followed by concatenation and convolutional refinement. The final layer was a 1×1×1 convolution with sigmoid activation, producing voxel-wise probabilities for binary segmentation.
+The 3D U-Net was configured with convolutional blocks consisting of two $3 \times 3 \times 3$ convolutions followed by batch normalization and ReLU activation. The encoder comprised four levels with 64, 128, 256, and 512 filters, and the bottleneck used 1024 filters. The decoder mirrored this configuration with deconvolutional layers followed by concatenation and convolutional refinement. The final layer was a  $1 \times 1 \times 1 $ convolution with sigmoid activation, producing voxel-wise probabilities for binary segmentation.
 
 Training was performed for up to 100 epochs with a batch size of 1 due to GPU memory constraints. The Adam optimizer was used with a learning rate of 0.0001. The loss function combined Binary Cross-Entropy (BCE) and Dice Loss with equal weights ($\alpha$ = 0.5), balancing voxel-level accuracy and spatial overlap. The Dice coefficient was monitored as the main validation metric.
 
@@ -247,16 +251,16 @@ Regularization strategies included early stopping (patience = 20 epochs), model 
 
 %\subsubsection{nnU-Net} \label{subsubsec:nnunet_arch}
 
-The nnU-Net \cite{Isensee2021} (no-new U-Net) framework is a self-configuring framework that automatically adapts its architecture, preprocessing, and training protocols to the specific characteristics of the dataset. The model was implemented using the official nnU-Net repository, which provides a streamlined pipeline for medical image segmentation tasks. A nnU-Net   was configured in its 3D full-resolution mode, which processes volumetric data without downsampling. Unlike manually tuned architectures, the framework automatically determined the optimal patch size, normalization strategy, and training schedule based on the ISLES dataset characteristics.
+The nnU-Net~\cite{Isensee2021} (no-new U-Net) framework is a self-configuring framework that automatically adapts its architecture, preprocessing, and training protocols to the specific characteristics of the dataset. The model was implemented using the official nnU-Net repository, which provides a streamlined pipeline for medical image segmentation tasks. A nnU-Net   was configured in its 3D full-resolution mode, which processes volumetric data without downsampling. Unlike manually tuned architectures, the framework automatically determined the optimal patch size, normalization strategy, and training schedule based on the ISLES dataset characteristics.
 
 For this study, the 3D full-resolution nnU-Net configuration was selected, which operates directly on volumetric data without downscaling. The preprocessing pipeline, model depth, and patch size were generated automatically by the framework. The network architecture retained the core principles of U-Net but adapted parameters such as kernel size, number of feature maps, and training schedule to the ISLES dataset.
 
 Training was performed on a single fold of the default five-fold cross-validation scheme provided by nnU-Net, due to computational constraints. Although nnU-Net is designed to train and ensemble multiple folds for optimal generalization, this study focused on one representative fold to evaluate the feasibility and performance of the approach.
-
+%
 The training process followed the default nnU-Net configuration, which automatically applies a combination of Dice and Cross-Entropy loss and optimizes the network using stochastic gradient descent (SGD) with momentum, was employed. The initial learning rate was set to 0.01, with a polynomial decay schedule. The model was trained with a batch size of 2, constrained by GPU memory limitations.
-
+%
 During training, the framework also performed extensive on-the-fly data augmentation, including random spatial transformations (rotations, scaling, and elastic deformations) and intensity augmentations such as brightness and contrast adjustments. These operations were applied probabilistically to each patch, enhancing the model’s robustness to anatomical variability and scanner-related differences.
-
+%
 The model was trained for 141 epochs, at which point the training was manually stopped once convergence trends were observed. Despite the reduced training schedule, the results obtained were consistent with those reported in the literature, confirming the robustness of the nnU-Net framework even under limited computational resources.
 
 %\subsubsection{YOLOv8} \label{subsubsec:yolov8_arch}
@@ -266,9 +270,9 @@ YOLOv8 is the latest iteration of the YOLO (You Only Look Once) family of models
 The YOLOv8-seg model extends the well-known object detection architecture into instance segmentation. It combines real-time efficiency with pixel-level prediction by integrating a convolutional backbone, a neck for multi-scale feature fusion, and segmentation heads that output binary masks for detected regions. Although originally designed for natural images, its adaptability and speed make it an interesting candidate for biomedical applications. 
 
 For adaptation to MRI data, the input images were converted into 2D slices extracted from the FLAIR volumes, maintaining spatial correspondence with their 3D masks. The model was initialized with random weights and trained specifically on the FLAIR images for binary ischemic lesion segmentation, without using any external pretrained parameters.
-
+%
 Training followed the default configuration provided by the Ultralytics YOLOv8-seg framework, which automatically defines optimization parameters and learning rate scheduling. The model was trained for 100 epochs with a batch size of 8, using the framework’s segmentation loss component as the primary objective.
-
+%
 During training, standard data augmentations were applied, including random flips, rotations, and contrast variations, to improve robustness and reduce overfitting.
 %
 Model performance was monitored on the validation set using precision, recall, and mean Average Precision (mAP) metrics, as implemented by the YOLOv8 evaluation pipeline.
@@ -277,97 +281,96 @@ After training, the Dice coefficient was computed on the independent test set to
 %
 While YOLOv8 processes data in 2D, the resulting slice-wise masks were reassembled into volumetric segmentations during postprocessing, enabling fair comparison with the 3D U-Net and nnU-Net outputs.
 
-\subsection{Evaluation Metrics} \label{subsec:metrics}
+%\subsection{Evaluation Metrics} 
+%\label{subsec:metrics}
+
 Model performance was evaluated using the two most common overlap-based segmentation metrics: Dice Similarity Coefficient (DSC) and Intersection over Union (IoU).
-
+%
 The Dice coefficient quantifies the harmonic mean between precision and recall at the voxel level, providing a measure of overlap between predicted and reference masks. It is particularly suited for medical imaging tasks with imbalanced classes, such as small ischemic lesions. The IoU measures the ratio between the intersection and the union of predicted and ground-truth regions, offering a stricter assessment of segmentation accuracy.
-
+%
 Both metrics were computed on the test set for each model. Higher values indicate better segmentation performance, with 1 representing perfect overlap.
 
-\subsection{Ethical considerations} \label{subsec:ethics}
-This study utilized publicly available, anonymized datasets, ensuring compliance with ethical standards for medical research. No new patient data were collected, and all analyses were conducted in accordance with relevant guidelines and regulations.
+%\subsection{Ethical considerations} 
+%\label{subsec:ethics}
 
-The study was conducted entirely using publicly available and anonymized data, thus requiring no additional ethical approval. The ISLES 2022 dataset complies with the ethical and legal standards of medical data sharing and was collected following informed consent procedures by its original providers.
+%This study utilized publicly available, anonymized datasets, ensuring compliance with ethical standards for medical research. No new patient data were collected, and all analyses were conducted in accordance with relevant guidelines and regulations.
 
-No personally identifiable information was processed, and all experiments were performed in compliance with the European General Data Protection Regulation (EGDPR) for research data handling. The study did not involve any clinical interventions or new patient data acquisition.
 
-\section{Results} \label{sec:results}
+
+\section{Results} 
+\label{sec:results}
 
 This section presents the quantitative and qualitative results obtained from the three segmentation models: U-Net, nnU-Net, and YOLOv8. Performance metrics include Dice coefficient, Intersection over Union (IoU), and, in the case of YOLOv8, precision, recall, and mean Average Precision (mAP). Figures and tables illustrate representative outcomes and training behaviors.
 
-\subsection{U-Net Results} \label{subsec:unet}
+\subsection{U-Net Results} 
+\label{subsec:unet}
 
-The 3D U-Net training was automatically stopped after 24 epochs due to the early stopping criterion, as shown in Figure \ref{fig:unet_loss_curve}, which depicts the training loss curve. The validation Dice coefficient increased steadily before reaching a stable value around epoch 20. Quantitative results for the test set are summarized in Table \ref{tab:unet_metrics}.
+The 3D U-Net training was automatically stopped after 24 epochs due to the early stopping criterion, as shown in Figure~\ref{fig:unet_loss_curve}, which depicts the training loss curve. The validation Dice coefficient increased steadily before reaching a stable value around epoch 20. Quantitative results for the test set are summarized in Table~\ref{tab:unet_metrics}.
+%
+Qualitative examples of the model outputs are presented in Figure~\ref{fig:unet_qualitative}, showing the ground truth in green and predicted segmentation masks in red, in both 2D slices and 3D reconstructions for representative test cases. Figure~\ref{fig:unet_qualitative} illustrates the best-performing case, with a Dice coefficient of 0.811, and an intermediate case, with a Dice of 0.342, highlighting the variability in segmentation accuracy across the dataset.
 
 \begin{figure}[tp]
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 1.jpg}
-    \caption{Training and validation loss curves for the 3D U-Net model over 24 epochs. The training loss (blue) decreases steadily, while the validation Dice coefficient (orange) improves and stabilizes around epoch 20, indicating convergence.}
-    \label{fig:unet_loss_curve}
+    \caption{Training and validation loss curves for the 3D U-Net model over 24 epochs. The training loss (blue) decreases steadily, while the validation Dice coefficient (orange) improves and stabilizes around epoch 20, indicating convergence.}\label{fig:unet_loss_curve}
 \end{figure}
 
 \begin{table}[tp]
-\centering
-\begin{tabular}{lc}
-\toprule
-\textbf{Metric} & \textbf{Mean ± SD} \\
-\midrule
-Dice & $0.294 \pm 0.282$ \\
-IoU & $0.207 \pm 0.221$ \\
-\bottomrule
-\end{tabular}
-\caption{Performance Metrics: 3D U-Net on the Test Set (N=25). The model achieved a mean Dice coefficient of 0.294 and an IoU of 0.207, with considerable variability across cases, as indicated by the standard deviation.}
-\label{tab:unet_metrics}
+  \centering
+    \begin{tabular}{lc}
+      \toprule
+        Metric & Mean $\pm$ SD \\
+      \midrule
+        Dice & $0.294 \pm 0.282$ \\
+        IoU & $0.207 \pm 0.221$ \\
+      \bottomrule
+    \end{tabular}
+  \caption{Performance Metrics: 3D U-Net on the Test Set (N=25). The model achieved a mean Dice coefficient of 0.294 and an IoU of 0.207, with considerable variability across cases, as indicated by the standard deviation.}\label{tab:unet_metrics}
 \end{table}
 
-Qualitative examples of the model outputs are presented in Figure \ref{fig:unet_qualitative}, showing the ground truth in green and predicted segmentation masks in red, in both 2D slices and 3D reconstructions for representative test cases. Figure \ref{fig:unet_qualitative} illustrates the best-performing case, with a Dice coefficient of 0.811, and an intermediate case, with a Dice of 0.342, highlighting the variability in segmentation accuracy across the dataset.
 
 \begin{figure}[tp]
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 2.jpg}
-    \caption{Qualitative Results: 3D U-Net Segmentations. The middle-left side shows the best-performing test case (Dice = 0.811), while the middle-right side presents an intermediate case (Dice = 0.342). Each case includes axial, sagittal, and coronal views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red), as well as a 3D rendering of the lesion. The model accurately captures lesion boundaries in the best case but struggles with diffuse regions in the intermediate case.}
-    \label{fig:unet_qualitative}
+    \caption{Qualitative Results: 3D U-Net Segmentations. The middle-left side shows the best-performing test case (Dice = 0.811), while the middle-right side presents an intermediate case (Dice = 0.342). Each case includes axial, sagittal, and coronal views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red), as well as a 3D rendering of the lesion. The model accurately captures lesion boundaries in the best case but struggles with diffuse regions in the intermediate case.}\label{fig:unet_qualitative}
 \end{figure}
 
 
-\subsection{nnU-Net Results} \label{subsec:nnu-net}  
+\subsection{nnU-Net Results} 
+\label{subsec:nnu-net}  
 
 The nnU-Net model was trained for 141 epochs, with training and validation loss curves shown in Figure \ref{fig:nnu-net_loss_curve}. The validation Dice coefficient improved consistently, stabilizing around epoch 120. Test set results are summarized in Table \ref{tab:nnunet_metrics}.
+%
+The nnU-Net model automatically configured its preprocessing, patch size, and training schedule. It reached optimal validation performance after 141 epochs, as indicated by the decreasing loss curve and the rise of the pseudo-Dice score, showed in Figure \ref{fig:nnu-net_loss_curve}. The average results on the test set are displayed in Table \ref{tab:nnunet_metrics}.
+%
+Visual results demonstrated that nnU-Net effectively captured lesion boundaries and spatial continuity, even in cases with irregular shapes or heterogeneous intensities. Figure \ref{fig:nnunet_qualitative} illustrates representative segmentations for two test cases (Dice 0.824 and 0.480), showing good agreement between the predicted and manual annotations.
 
 \begin{figure}[tp]
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 3.jpg}
-    \caption{Training and validation loss curves for the nnU-Net model over 141 epochs. The training loss (blue) decreases steadily, while the validation Dice coefficient (orange) improves and stabilizes around epoch 120, indicating convergence.}
-    \label{fig:nnu-net_loss_curve}
+    \caption{Training and validation loss curves for the nnU-Net model over 141 epochs. The training loss (blue) decreases steadily, while the validation Dice coefficient (orange) improves and stabilizes around epoch 120, indicating convergence.}\label{fig:nnu-net_loss_curve}
 \end{figure}
 
 \begin{table}[tp]
-\centering
-\begin{tabular}{lc}
-\toprule
-\textbf{Metric} & \textbf{Mean ± SD} \\
-\midrule
-Dice & $0.483 \pm 0.284$ \\
-IoU & $0.362 \pm 0.244$ \\
-\bottomrule
-\end{tabular}
-\caption{Performance Metrics: nnU-Net on the Test Set (N=25). The model achieved a mean Dice coefficient of 0.483 and an IoU of 0.362, demonstrating improved accuracy and robustness compared to the classical U-Net.}
-\label{tab:nnunet_metrics}
+  \centering
+    \begin{tabular}{lc}
+      \toprule
+        Metric & Mean $\pm$ SD \\
+      \midrule
+        Dice & $0.483 \pm 0.284$ \\
+        IoU & $0.362 \pm 0.244$ \\
+      \bottomrule
+    \end{tabular}
+  \caption{Performance Metrics: nnU-Net on the Test Set (N=25). The model achieved a mean Dice coefficient of 0.483 and an IoU of 0.362, demonstrating improved accuracy and robustness compared to the classical U-Net.}\label{tab:nnunet_metrics}
 \end{table}
-
-The nnU-Net model automatically configured its preprocessing, patch size, and training schedule. It reached optimal validation performance after 141 epochs, as indicated by the decreasing loss curve and the rise of the pseudo-Dice score, showed in Figure \ref{fig:nnu-net_loss_curve}. The average results on the test set are displayed in Table \ref{tab:nnunet_metrics}.
-
-Visual results demonstrated that nnU-Net effectively captured lesion boundaries and spatial continuity, even in cases with irregular shapes or heterogeneous intensities. Figure \ref{fig:nnunet_qualitative} illustrates representative segmentations for two test cases (Dice 0.824 and 0.480), showing good agreement between the predicted and manual annotations.
 
 \begin{figure}[tp]    
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 4.jpg}
-    \caption{Qualitative Results: nnU-Net Segmentations. The left side shows a high-performing test case (Dice = 0.824), while the right side presents a moderate case (Dice = 0.480). Each case includes axial, sagittal, and coronal views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red), as well as a 3D rendering of the lesion. The model accurately captures lesion boundaries in both cases, demonstrating its robustness across varying lesion characteristics.}
-    \label{fig:nnunet_qualitative}
+    \caption{Qualitative Results: nnU-Net Segmentations. The left side shows a high-performing test case (Dice = 0.824), while the right side presents a moderate case (Dice = 0.480). Each case includes axial, sagittal, and coronal views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red), as well as a 3D rendering of the lesion. The model accurately captures lesion boundaries in both cases, demonstrating its robustness across varying lesion characteristics.}\label{fig:nnunet_qualitative}
 \end{figure}
 
-
-\subsection{YOLOv8 Results} \label{subsec:yolov8}
+\subsection{YOLOv8 Results}\label{subsec:yolov8}
 
 The YOLOv8-seg model was trained for 100 epochs, with training and validation loss curves shown in Figure \ref{fig:yolov8_loss_curve}. The model achieved a mean Average Precision (mAP) of 0.512 on the validation set. Test set results, including Dice coefficient, IoU, precision, and recall, are summarized in Table \ref{tab:yolov8_metrics} and Table \ref{tab:yolov8_detection_metrics}.
 
@@ -379,24 +382,23 @@ The YOLOv8-seg model was trained for 100 epochs, with training and validation lo
 \end{figure}
 
 \begin{table}[tp]
-\centering
-\begin{tabular}{lc}
-\toprule
-\textbf{Metric} & \textbf{Mean ± SD} \\
-\midrule
-Dice & $0.476 \pm 0.287$ \\
-IoU & $0.358 \pm 0.254$ \\
-\bottomrule
-\end{tabular}
-\caption{Performance Metrics: YOLOv8-seg on the Test Set (N=25). The model achieved a mean Dice coefficient of 0.476 and an IoU of 0.358, demonstrating competitive performance with efficient inference capabilities.}
-\label{tab:yolov8_metrics}
+  \centering
+    \begin{tabular}{lc}
+      \toprule
+        Metric & Mean $\pm$ SD \\
+      \midrule
+        Dice & $0.476 \pm 0.287$ \\
+        IoU & $0.358 \pm 0.254$ \\
+      \bottomrule
+    \end{tabular}
+  \caption{Performance Metrics: YOLOv8-seg on the Test Set (N=25). The model achieved a mean Dice coefficient of 0.476 and an IoU of 0.358, demonstrating competitive performance with efficient inference capabilities.}\label{tab:yolov8_metrics}
 \end{table}
 
 \begin{table}[tp]
 \centering
 \begin{tabular}{lc}
 \toprule
-\textbf{Metric} & \textbf{Mean ± SD} \\
+Metric & Mean $\pm$ SD \\
 \midrule
 Precision & $0.437 \pm 0.057$ \\
 Recall & $0.213 \pm 0.031$ \\
@@ -408,10 +410,10 @@ mAP@0.5:0.95 & $0.073 \pm 0.014$ \\
 \label{tab:yolov8_detection_metrics}
 \end{table}
 
-The YOLOv8 segmentation variant was trained on 2D FLAIR slices reconstructed into 3D volumes for evaluation. The loss curve showed rapid convergence after 50 epochs as is shown in Figure \ref{fig:yolov8_loss_curve}. Quantitative metrics for validation are summarized in Table \ref{tab:yolov8_metrics}, while the final test results are presented in Table \ref{tab:comparison}.
+The YOLOv8 segmentation variant was trained on 2D FLAIR slices reconstructed into 3D volumes for evaluation. The loss curve showed rapid convergence after 50 epochs as is shown in Figure~\ref{fig:yolov8_loss_curve}. Quantitative metrics for validation are summarized in Table~\ref{tab:yolov8_metrics}, while the final test results are presented in Table~\ref{tab:comparison}.
 
 Qualitatively, YOLOv8 achieved fast inference and detected most lesion regions, as shown in Figure \ref{fig:yolov8_qualitative}, but its segmentations tended to be slightly less precise than those of the 3D networks, occasionally missing fine structures or small peripheral lesions.
-
+%
 \begin{figure}[tp]
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 6.jpg}
@@ -420,41 +422,49 @@ Qualitatively, YOLOv8 achieved fast inference and detected most lesion regions, 
 \end{figure}
 
 
-\subsection{Summarized Results Comparison} \label{subsec:comparison}
+\subsection{Summarized Results Comparison} 
+\label{subsec:comparison}
 
 A comparative overview of the three architectures is provided in Table \ref{tab:comparison}. As shown in Table \ref{tab:comparison}, nnU-Net achieved the highest Dice and IoU values across all patient cases, followed by YOLOv8 and U-Net. These quantitative findings confirm the influence of model design and dimensionality on segmentation accuracy.
 
-\begin{table}[h]
+\begin{table}[tp]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lccc}
 \toprule
-\textbf{Model} & \textbf{Dice} & \textbf{IoU} & \textbf{Notes} \\
+Model & Dice & IoU & Notes \\
 \midrule
 U-Net & $0.294 \pm 0.282$ & $0.207 \pm 0.221$ & Stable training; limited generalization to complex lesions \\
 nnU-Net & $0.483 \pm 0.284$ & $0.362 \pm 0.244$ & Best overall performance and most consistent segmentation \\
 YOLOv8 & $0.476 \pm 0.287$ & $0.358 \pm 0.254$ & Fastest inference; lower boundary accuracy \\
 \bottomrule
 \end{tabular}
-\caption{Comparison of Segmentation Models on the Test Set (N=25). The nnU-Net achieved the highest Dice and IoU scores, indicating superior segmentation accuracy and robustness. YOLOv8 provided competitive performance with efficient inference, while U-Net showed limited generalization capabilities.}
+}
+\caption{Comparison of segmentation models on the test set (N=25). The nnU-Net achieved the highest Dice and IoU scores, indicating superior segmentation accuracy and robustness. YOLOv8 provided competitive performance with efficient inference, while U-Net showed limited generalization capabilities.}
 \label{tab:comparison}
 \end{table}
 
-\section{Discussion} \label{sec:discussion}
+\section{Discussion} 
+\label{sec:discussion}
 
 %This section discusses the comparative performance of the three segmentation models, highlighting their strengths and limitations, as well as potential clinical implications and future research directions.
 
+The study was conducted entirely using publicly available and anonymized data, thus requiring no additional ethical approval. The ISLES 2022 dataset complies with the ethical and legal standards of medical data sharing and was collected following informed consent procedures by its original providers.
+%
+No personally identifiable information was processed, and all experiments were performed in compliance with the European General Data Protection Regulation (EGDPR) for research data handling. The study did not involve any clinical interventions or new patient data acquisition.
+
 The comparative analysis highlights distinct characteristics in the performance of U-Net, nnU-Net, and YOLOv8 for ischemic lesion segmentation in FLAIR MRI images.
-
+%
 The U-Net architecture achieved moderate performance across the validation and test sets. Despite its well-established effectiveness in biomedical image segmentation, the model exhibited considerable variability among individual cases. Quantitatively, the Dice and IoU metrics indicated that the network was capable of correctly identifying lesions in certain cases but failed to generalize consistently across the dataset. This uneven behavior suggests that the classical U-Net is highly sensitive to image quality and lesion contrast. In cases where boundaries were well defined, segmentation was accurate, while diffuse or low-contrast lesions often led to missed detections.
-
+%
 The relatively high standard deviation observed in the test results indicates limited robustness. This variability may stem from the restricted size of the dataset and from the intrinsic heterogeneity of ischemic lesions. Additionally, the classic U-Net requires extensive manual configuration, including input size definition, normalization strategy, and data augmentation parameters. These manual design choices can introduce performance fluctuations depending on how well they adapt to the dataset characteristics.
 
 The nnU-Net outperformed the classical U-Net in both validation and test phases. Its self-configuring mechanism automatically selected preprocessing, normalization, and training hyperparameters, leading to higher Dice and IoU scores. The model demonstrated a strong ability to adapt to the dataset and segment complex or irregular lesions, confirming the effectiveness of automated optimization. However, some test cases still produced null segmentations, revealing that even advanced configurations can struggle with highly heterogeneous or low-quality images.
-
+%
 The improved consistency observed in nnU-Net reflects its capacity to generalize better from limited data. Nevertheless, the standard deviation across test results indicates residual instability, possibly due to the reduced number of samples and to contrast variations between scans. In addition, nnU-Net is computationally demanding, requiring long training times and significant GPU resources, which may limit its practical deployment in resource-constrained environments.
 
 Although originally designed for object detection rather than medical segmentation, YOLOv8 achieved competitive results in this study. Its inference speed and implementation simplicity stand out as major advantages, making it suitable for real-time applications. The model achieved respectable Dice and IoU values, occasionally matching those of nnU-Net in favorable cases. However, it also exhibited variability, with some test cases showing incomplete or missing lesion predictions.
-
+%
 This behavior can be explained by YOLOv8’s design, which prioritizes detection speed and bounding-box optimization over pixel-level precision. Consequently, the model performs well when lesions are clearly delimited but tends to underestimate diffuse or low-contrast regions. Despite these limitations, YOLOv8 demonstrates strong potential for fast and flexible segmentation pipelines, especially if adapted with domain-specific augmentations or loss functions.
 
 When comparing all three architectures, nnU-Net achieved the highest accuracy and stability, confirming the benefits of automatic configuration in medical image segmentation. U-Net, while less resource-intensive, showed limited generalization, particularly in challenging cases. YOLOv8, though less precise, offered the best balance between speed and usability. These results emphasize that performance depends not only on network complexity but also on the suitability of the architecture to the dataset characteristics. 
@@ -463,16 +473,17 @@ However, several limitations must be acknowledged. The study was conducted on a 
 
 Future research could focus on incorporating multimodal MRI sequences (e.g., DWI and ADC) to improve lesion characterization and model generalization. In addition to classical data augmentation techniques, the creation of larger and more diverse datasets through the inclusion of new clinical cases and the integration of complementary public databases would be essential to achieve greater robustness. From a methodological perspective, combining 3D segmentation architectures with lightweight 2D frameworks like YOLOv8 could lead to hybrid models that preserve spatial precision while maintaining high computational efficiency. Such developments would contribute to the design of reliable and time-efficient automated systems for early ischemic stroke screening and diagnosis.
 
-\section{Conclusion} \label{sec:conclusion}
+\section{Conclusion} 
+\label{sec:conclusion}
 
 %This study presented a comparative analysis of three deep learning architectures—U-Net, nnU-Net, and YOLOv8—for the segmentation of ischemic stroke lesions in FLAIR MRI images. Each model demonstrated unique strengths and limitations, influenced by their design philosophies and adaptability to the dataset characteristics.
 
 This study presented a comparative analysis of three deep learning architectures—U-Net, nnU-Net, and YOLOv8—for the automatic segmentation of ischemic stroke lesions in FLAIR MRI images. The main objective was to evaluate their performance, analyze their respective strengths and weaknesses, and assess their feasibility for clinical use. The results demonstrate that deep learning techniques can achieve accurate and reproducible segmentation of ischemic lesions even without the use of contrast-enhanced imaging, supporting the potential of artificial intelligence for early stroke detection and screening.
-
+%
 The experimental findings show that nnU-Net achieved the highest overall accuracy, obtaining the best Dice and IoU scores and exhibiting strong generalization across cases. Its self-configuring design proved particularly effective in adapting the model to the dataset characteristics, minimizing the need for manual tuning. U-Net, despite its widespread use as a baseline in biomedical segmentation, achieved the lowest performance among the evaluated models. Its results were less accurate and more variable, confirming the limitations of manually configured architectures when applied to heterogeneous clinical data. YOLOv8, originally designed for object detection, offered competitive performance and the fastest inference time, highlighting its potential for real-time or resource-constrained applications.
 
 These outcomes indicate that no single architecture dominates in all aspects; rather, each offers complementary advantages. nnU-Net is best suited for research and diagnostic contexts requiring high accuracy, U-Net serves as a methodological baseline that provides a reference for evaluating more advanced models, and YOLOv8 enables rapid deployment in clinical workflows where processing speed is crucial. Together, they demonstrate that automated segmentation of ischemic lesions is technically feasible and can be integrated into radiological pipelines to support decision-making and reduce manual workload.
-
+%
 The achievement of accurate segmentation without contrast administration has significant implications for non-invasive and cost-efficient stroke assessment. Automated detection can assist radiologists in identifying subtle ischemic regions that might otherwise be overlooked, standardize the diagnostic process, and accelerate treatment planning. These models demonstrate strong potential for real-world implementation as assistive tools within hospital imaging systems or screening platforms. With further validation on larger and more diverse datasets, they could evolve into clinically deployable AI solutions capable of supporting early diagnosis, personalized monitoring, and potentially near real-time MRI analysis in emergency settings.
 
 In conclusion, this work confirms that deep learning-based segmentation provides a promising pathway toward automated, precise, and accessible tools for ischemic stroke detection. By combining accuracy, adaptability, and computational efficiency, the explored architectures contribute to advancing medical imaging toward faster and more reliable diagnostic support. The integration of such AI-driven solutions into clinical practice could significantly enhance patient care, enabling earlier intervention and better outcomes in one of the world’s leading causes of disability and mortality.
