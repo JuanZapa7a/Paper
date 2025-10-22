@@ -299,16 +299,15 @@ This section presents the quantitative and qualitative results obtained from the
 
 %\subsection{U-Net Results}\label{subsec:unet}
 
-The 3D U-Net training was automatically stopped after 24 epochs due to the early stopping criterion, as shown in Figure~\ref{fig:unet_loss_curve}, which depicts the training loss curve. The validation Dice coefficient increased steadily before reaching a stable value around epoch 20. Quantitative results for the test set are summarized in Table~\ref{tab:comparative_metrics} in its first row.
+The 3D U-Net training was automatically stopped after 24 epochs due to the early stopping criterion, as shown in Figure~\ref{fig:unet_loss_curve}, which depicts the training loss curve. The validation Dice coefficient increased steadily before reaching a stable value around epoch 20. Quantitative results for the test set are summarized in the first row of Table~\ref{tab:comparative_metrics} for the U-Net model.
 %
 Qualitative examples of the model outputs are presented in Figure~\ref{fig:unet_qualitative}, showing the ground truth in green and predicted segmentation masks in red, in both 2D slices and 3D reconstructions for representative test cases. Figure~\ref{fig:unet_qualitative} illustrates the best-performing case, with a Dice coefficient of 0.811, and an intermediate case, with a Dice of 0.342, highlighting the variability in segmentation accuracy across the dataset.
-
+%
 \begin{figure}[tp]
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 1.jpg}
     \caption{Training and validation loss curves for the 3D U-Net model over 24 epochs. The training loss (blue) decreases steadily, while the validation Dice coefficient (orange) improves and stabilizes around epoch 20, indicating convergence.}\label{fig:unet_loss_curve}
 \end{figure}
-
 % \begin{table}[tp]
 % \centering
 % \begin{tabular}{lc}
@@ -321,10 +320,9 @@ Qualitative examples of the model outputs are presented in Figure~\ref{fig:unet_
 % \end{tabular}
 % \caption{Performance Metrics: 3D U-Net on the Test Set (N=25). The model achieved a mean Dice coefficient of 0.294 and an IoU of 0.207, with considerable variability across cases, as indicated by the standard deviation.}\label{tab:unet_metrics}
 % \end{table}
-
 \begin{table}[tp]
 \centering
-\caption{Performance metrics (mean ± SD) on the test set (N=25) for the three compared models. The U-Net model achieved a mean Dice coefficient of 0.294 and an IoU of 0.207, with considerable variability across cases, as indicated by the standard deviation. The nnU-Net and YOLOv8 models demonstrated improved performance, with mean Dice coefficients of 0.483 and 0.476, respectively, and IoU values of 0.362 and 0.358. These results highlight the advantages of automated configuration and real-time segmentation approaches over the classical U-Net architecture in this ischemic stroke lesion segmentation task.}\label{tab:comparative_metrics}
+\caption{Performance metrics (mean $\pm$ SD) on the test set (N=25) for the three compared models. The U-Net model achieved a mean Dice coefficient of 0.294 and an IoU of 0.207, with considerable variability across cases, as indicated by the standard deviation. The nnU-Net and YOLOv8 models demonstrated improved performance, with mean Dice coefficients of 0.483 and 0.476, respectively, and IoU values of 0.362 and 0.358. These results highlight the advantages of automated configuration and real-time segmentation approaches over the classical U-Net architecture in this ischemic stroke lesion segmentation task.}\label{tab:comparative_metrics}
 \label{tab:comparative_metrics}
 \begin{tabular}{lcc}
 \toprule
@@ -336,7 +334,7 @@ YOLOv8-seg     & $0.476 \pm 0.287$ & $0.358 \pm 0.254$ \\
 \bottomrule
 \end{tabular}
 \end{table}
-
+%
 \begin{figure}[tp]
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 2.jpg}
@@ -344,12 +342,11 @@ YOLOv8-seg     & $0.476 \pm 0.287$ & $0.358 \pm 0.254$ \\
     \label{fig:unet_qualitative}
 \end{figure}
 
-
 %\subsection{nnU-Net Results} \label{subsec:nnu-net}  
 
 %The nnU-Net model was trained for 141 epochs, with training and validation loss curves shown in Figure~\ref{fig:nnu-net_loss_curve}. The validation Dice coefficient improved consistently, stabilizing around epoch 120. Test set results are summarized in Table~\ref{tab:comparative_metrics} in its second row.
 %
-The nnU-Net model automatically configured its preprocessing, patch size, and training schedule. It reached optimal validation performance after 141 epochs, as indicated by the decreasing loss curve and the rise of the pseudo-Dice score, showed in Figure~\ref{fig:nnu-net_loss_curve}. The average results on the test set are displayed in Table \ref{tab:comparative_metrics}.
+The nnU-Net model automatically configured its preprocessing, patch size, and training schedule. It reached optimal validation performance after 141 epochs, as indicated by the decreasing loss curve and the rising pseudo-Dice score, shown in Figure~\ref{fig:nnu-net_loss_curve}. The average results on the test set are displayed in the second row of Table~\ref{tab:comparative_metrics} for the nnU-Net model.
 %
 Qualitative results demonstrated that nnU-Net effectively captured lesion boundaries and spatial continuity, even in cases with irregular shapes or heterogeneous intensities. Figure~\ref{fig:nnunet_qualitative} illustrates representative segmentations for two test cases (Dice 0.824 and 0.480), showing good agreement between the predicted and manual annotations.
 
@@ -381,15 +378,14 @@ Qualitative results demonstrated that nnU-Net effectively captured lesion bounda
 
 %\subsection{YOLOv8 Results} \label{subsec:yolov8}
 
-The YOLOv8-seg model was trained for 100 epochs, with training and validation loss curves shown in Figure~\ref{fig:yolov8_loss_curve}. The loss curve showed rapid convergence after 50 epochs. The model achieved a mean Average Precision (mAP) of 0.512 on the validation set. Test set results, including Dice coefficient, IoU, precision, and recall, are summarized in Table~\ref{tab:comparative_metrics} in its third row and Table~\ref{tab:yolov8_detection_metrics}. The YOLOv8 segmentation variant was trained on 2D FLAIR slices reconstructed into 3D volumes for evaluation. Quantitative metrics for validation are summarized in Table~\ref{tab:comparative_metrics}, while the final test results are presented in Table~\ref{tab:comparison}.
-
-
+The YOLOv8-seg model was trained for 100 epochs, with training and validation loss curves shown in Figure~\ref{fig:yolov8_loss_curve}. The loss curves showed rapid convergence after 50 epochs. The model achieved a mean Average Precision (mAP) of 0.512 on the validation set. The YOLOv8 segmentation variant was trained on 2D FLAIR slices, which were reconstructed into 3D volumes for evaluation. Test set results, including Dice coefficient, IoU, precision, and recall, are summarized in the third row of Table~\ref{tab:comparative_metrics} and in Table~\ref{tab:yolov8_detection_metrics}.
+%
 \begin{figure}[tp]
     \centering
     \includegraphics[width=.7\textwidth]{figures/Figure 5.jpg}
     \caption{Training and validation loss curves for the YOLOv8-seg model over 100 epochs. The training loss (blue) decreases rapidly, while the validation Dice coefficient (orange) improves and stabilizes around epoch 50, indicating convergence.}\label{fig:yolov8_loss_curve}
 \end{figure}
-
+%
 % \begin{table}[tp]
 % \centering
 % \begin{tabular}{lc}
@@ -402,7 +398,7 @@ The YOLOv8-seg model was trained for 100 epochs, with training and validation lo
 % \end{tabular}
 % \caption{Performance Metrics: YOLOv8-seg on the Test Set (N=25). The model achieved a mean Dice coefficient of 0.476 and an IoU of 0.358, demonstrating competitive performance with efficient inference capabilities.}\label{tab:yolov8_metrics}
 % \end{table}
-
+%
 \begin{table}[tp]
 \centering
 \begin{tabular}{lc}
@@ -417,7 +413,6 @@ mAP@0.5:0.95 & $0.073 \pm 0.014$ \\
 \end{tabular}
 \caption{Performance Metrics: YOLOv8 on the Test Set (N=25). The model achieved a mean Average Precision (mAP) of 0.202 at IoU threshold 0.5 and 0.073 at IoU thresholds from 0.5 to 0.95, indicating its effectiveness in detecting ischemic lesions with reasonable precision and recall.}\label{tab:yolov8_detection_metrics}
 \end{table}
-
 
 \begin{figure}[tp]
     \centering
@@ -491,4 +486,7 @@ In conclusion, this work confirms that deep learning-based segmentation provides
 
 \printbibliography[heading=bibintoc,title={References}]
 
+% haz una seccion de agradecimientos si es necesario
+\section*{Acknowledgments}
+The authors would like to thank the providers of the ISLES 2022 dataset for making this valuable resource publicly available, which greatly facilitated this research. We also acknowledge the support of our institution's computational resources that enabled the training and evaluation of the deep learning models presented in this study.
 \end{document}
