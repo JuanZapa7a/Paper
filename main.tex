@@ -126,6 +126,7 @@ Medical image segmentation has progressed from classical intensity‑ and model�
 
 Benchmark challenges and public datasets have driven reproducible progress but also expose key limitations: annotated ischemic stroke collections—especially FLAIR‑only datasets—are relatively small, cross‑site variability persists, and few studies compare fundamentally different paradigms under matched preprocessing and evaluation protocols. Notably, the BRATS challenge established a widely used benchmark for brain tumor segmentation and helped standardize metrics and evaluation practices across studies~\cite{Menze2015}. However, dataset challenges (e.g., BRATS and the ISLES series) have been central to progress in brain lesion segmentation, providing standardized data, metrics and leaderboards that enable reproducible comparison and expose the limitations of intensity‑based approaches~\cite{Menze2015}. These benchmarks highlighted early on that classical image processing techniques—thresholding, region growing, clustering, active contours and graph cuts—are often insufficient for heterogeneous clinical MRI due to low contrast, motion artefacts and scanner variability~\cite{qianActiveContourModel2013,steinStatisticalDeformableModel2001,boykovInteractiveGraphCuts2001}. 
 
+% referencias
 Deep learning—particularly convolutional neural networks—enabled a step change by providing end‑to‑end dense prediction. Architectures such as U‑Net (and its 3D variants) became standard baselines; residual and attention extensions and multiscale 3D designs further improved localization and robustness. Frameworks like nnU‑Net have shown that automated configuration of preprocessing, patch size and training schedules often outperforms manual tuning across heterogeneous medical tasks. Ensemble and multiscale strategies (e.g., DeepMedic, V‑Net) remain powerful when spatial context and postprocessing priors are integrated. Recently, general‑purpose, real‑time oriented models (notably YOLO‑family adaptations) and attention‑augmented detectors have been adapted to stroke imaging to enable rapid triage and real‑time screening; these approaches trade some voxel‑level precision for inference speed and often require domain‑specific losses and 3D reassembly to produce clinically useful volumetric masks~\cite{chenAutomaticDetectionStroke2022,chenMSAYOLOv5MultiscaleAttentionbased2023,gheibiCNNResDeepLearning2023}. Hybrid strategies that combine 2D speed with 3D refinement appear promising for clinical pipelines that demand both quick turnaround and spatial accuracy. 
 
 Beyond architecture design, algorithmic pipelines matured along two complementary axes. First, multiscale 3D networks and ensemble strategies (DeepMedic, V‑Net and their variants) integrated spatial context and postprocessing priors to improve lesion continuity and reduce false positives~\cite{kamnitsasEfficientMultiscale3D2017,Milletari2016,liFullyConvolutionalNetwork2018}. Second, meta‑frameworks such as nnU‑Net automated many engineering choices (preprocessing, patch size, normalization and training schedules), often matching or exceeding manually tuned systems across diverse datasets~\cite{Isensee2021,isenseeAbstractNnUNetSelfadapting2019}.
@@ -256,7 +257,7 @@ For this study, the 3D full-resolution nnU-Net configuration was selected, which
 
 Training was performed on a single fold of the default five-fold cross-validation scheme provided by nnU-Net, due to computational constraints. Although nnU-Net is designed to train and ensemble multiple folds for optimal generalization, this study focused on one representative fold to evaluate the feasibility and performance of the approach.
 %
-The training process followed the default nnU-Net configuration, which automatically applies a combination of Dice and Cross-Entropy loss and optimizes the network using stochastic gradient descent (SGD) with momentum, was employed. The initial learning rate was set to 0.01, with a polynomial decay schedule. The model was trained with a batch size of 2, constrained by GPU memory limitations.
+The training process followed the default nnU-Net configuration, which automatically applies a combination of Dice and Cross-Entropy loss and optimizes the network using stochastic gradient descent (SGD) with momentum, weight decay, and learning rate scheduling. The initial learning rate was set to 0.01, with a polynomial decay schedule. The model was trained with a batch size of 2, constrained by GPU memory limitations.
 %
 During training, the framework also performed extensive on-the-fly data augmentation, including random spatial transformations (rotations, scaling, and elastic deformations) and intensity augmentations such as brightness and contrast adjustments. These operations were applied probabilistically to each patch, enhancing the model’s robustness to anatomical variability and scanner-related differences.
 %
@@ -279,7 +280,7 @@ While YOLOv8 processes data in 2D, the resulting slice-wise masks were reassembl
 %\subsection{Evaluation Metrics} 
 %\label{subsec:metrics}
 
-Models performance was evaluated using the two most common overlap-based segmentation metrics: Dice Similarity Coefficient (DSC) and Intersection over Union (IoU). YoloV8 performance was monitored on the validation set using precision, recall, and mean Average Precision (mAP) metrics, as implemented by the YOLOv8 evaluation pipeline.
+Models performance was evaluated using the two most common overlap-based segmentation metrics: Dice Similarity Coefficient (DSC) and Intersection over Union (IoU). YOLOV8 performance was monitored on the validation set using precision, recall, and mean Average Precision (mAP) metrics, as implemented by the YOLOv8 evaluation pipeline.
 %
 After training, the Dice coefficient was computed on the independent test set to provide a direct comparison with the U-Net and nnU-Net segmentation models.
 The Dice coefficient quantifies the harmonic mean between precision and recall at the voxel level, providing a measure of overlap between predicted and reference masks. It is particularly suited for medical imaging tasks with imbalanced classes, such as small ischemic lesions. The IoU measures the ratio between the intersection and the union of predicted and ground-truth regions, offering a stricter assessment of segmentation accuracy.
@@ -295,11 +296,13 @@ Both metrics were computed on the test set for each model. Higher values indicat
 
 \section{Results}\label{sec:results}
 
-This section presents the quantitative and qualitative results obtained from the three segmentation models: U-Net, nnU-Net, and YOLOv8. Performance metrics include Dice coefficient, Intersection over Union (IoU), and, in the case of YOLOv8, precision, recall, and mean Average Precision (mAP) was obtained too. Figures and tables illustrate representative outcomes and training behaviors.
+This section presents the quantitative and qualitative results obtained from the three segmentation models: U-Net, nnU-Net, and YOLOv8. Performance metrics include Dice coefficient, Intersection over Union (IoU), and, in the case of YOLOv8, precision, recall, and mean Average Precision (mAP) were obtained too. Figures and tables illustrate representative outcomes and training behaviors.
 
 %\subsection{U-Net Results}\label{subsec:unet}
 
-The 3D U-Net training was automatically stopped after 24 epochs due to the early stopping criterion, as shown in Figure~\ref{fig:unet_loss_curve}, which depicts the training loss curve. The validation Dice coefficient increased steadily before reaching a stable value around epoch 20. Quantitative results for the test set are summarized in the first row of Table~\ref{tab:comparative_metrics} for the U-Net model.
+The 3D U-Net training was automatically stopped after 24 epochs due to the early stopping criterion %, as shown in Figure~\ref{fig:unet_loss_curve},which depicts the training loss curve. 
+%The validation Dice coefficient increased steadily before reaching a stable value around epoch 20. 
+Quantitative results for the test set are summarized in the first row of Table~\ref{tab:comparative_metrics} for the U-Net model.
 %
 Qualitative examples of the model outputs are presented in Figure~\ref{fig:unet_qualitative}, showing the ground truth in green and predicted segmentation masks in red, in both 2D slices and 3D reconstructions for representative test cases. Figure~\ref{fig:unet_qualitative} illustrates the best-performing case, with a Dice coefficient of 0.811, and an intermediate case, with a Dice of 0.342, highlighting the variability in segmentation accuracy across the dataset.
 %
@@ -338,7 +341,7 @@ YOLOv8-seg     & $0.476 \pm 0.287$ & $0.358 \pm 0.254$ \\
 \begin{figure}[tp]
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 2.jpg}
-    \caption{Qualitative Results: 3D U-Net Segmentations. The middle-left side shows the best-performing test case (Dice = 0.811), while the middle-right side presents an intermediate case (Dice = 0.342). Each case includes axial, sagittal, and coronal views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red), as well as a 3D rendering of the lesion. The model accurately captures lesion boundaries in the best case but struggles with diffuse regions in the intermediate case.}
+    \caption{Qualitative Results: 3D U-Net Segmentations. The half-left side shows the best-performing test case (Dice = 0.811), while the half-right side presents an intermediate case (Dice = 0.342). Each case includes axial and 3D views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red), as well as a 3D rendering of the lesion. The model accurately captures lesion boundaries in the best case but struggles with diffuse regions in the intermediate case.}
     \label{fig:unet_qualitative}
 \end{figure}
 
