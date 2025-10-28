@@ -12,8 +12,8 @@
 \usepackage{geometry}           % Márgenes
 \geometry{a4paper, margin=2.5cm}
 \usepackage{color}              % Colores 
-\usepackage{siunitx}            % SI units  
-
+\usepackage{siunitx}            % SI units  (https://ctan.org/pkg/siunitx
+\usepackage{lineno}             % Numeración de líneas
 \usepackage{csquotes}
 %\usepackage[style=numeric,sorting=none]{biblatex}
 
@@ -32,6 +32,7 @@
 \usepackage{pgfplots}
 \usetikzlibrary{matrix}
 \pgfplotsset{compat=1.18}
+\usepgfplotslibrary{statistics}
 
 
 \title{Detection of Vascular Pathologies in Non-Contrast Magnetic Resonance Images for Early Screening} %of Cerebrovascular Diseases}
@@ -55,21 +56,21 @@
 %Cerebrovascular diseases (CVD) are a leading cause of death and disability worldwide, making early detection and treatment crucial to prevent severe outcomes. This study addresses the clinical need for non-contrast MRI-based detection methods by developing a deep learning approach to identify vascular pathologies and segment ischemic stroke lesions without contrast agents. We evaluated and compared three convolutional neural network architectures—U-Net, nnU-Net, and YOLOv8—for automatic segmentation of ischemic stroke lesions using FLAIR MRI sequences. The models were trained and tested on the ISLES 2022 public dataset containing 250 patient cases. Performance was assessed using Dice coefficient and Intersection over Union (IoU) metrics. Results demonstrate that nnU-Net achieved the best overall accuracy with a mean Dice score of 0.483 ± 0.284, outperforming both U-Net and YOLOv8 in reliability and generalization across heterogeneous lesions. Conversely, YOLOv8 demonstrated the fastest inference speed and competitive segmentation accuracy, positioning it as a promising lightweight alternative for time-critical clinical applications. These findings confirm that automated segmentation of ischemic lesions from non-contrast FLAIR MRI is feasible and clinically viable, supporting faster, more objective, and scalable stroke assessment in clinical settings. Further research will focus on validating these models on larger datasets and refining their performance for enhanced early CVD screening capabilities.
 %
 %}
+\linenumbers
 
-\abstract{
+\begin{abstract}
 Early and non-invasive detection of cerebrovascular pathologies is essential to improve patient triage and outcomes. Contrast-free FLAIR MRI sequences are widely available in clinical practice but pose challenges for automated analysis due to variable lesion appearance, low contrast, and inter-scanner variability. In this study, we evaluate and compare three deep learning strategies for ischemic lesion segmentation in non-contrast FLAIR images: a classical 3D U-Net, the self-configuring nnU-Net framework, and an adapted 2D YOLOv8 segmentation variant. All methods were trained and tested using the ISLES 2022 dataset (N = 250 cases) under matched preprocessing and evaluation protocols to ensure a fair comparison.
 %
 We report quantitative performance using Dice similarity coefficient and Intersection over Union (IoU), and analyze trade-offs between accuracy, robustness and inference efficiency. The nnU-Net achieved the highest average overlap (Dice $= 0.483 \pm 0.284$), demonstrating superior robustness across heterogeneous lesion presentations. The YOLOv8-based model provided competitive volumetric performance (Dice $\approx 0.476$) while substantially reducing inference time, suggesting suitability for time-constrained clinical workflows. The classical 3D U-Net served as a manual baseline and exhibited lower mean overlap (Dice $\approx 0.294$), indicating sensitivity to parameter tuning and dataset variability.
 %
 Beyond numerical metrics, we qualitatively examine typical failure modes (small peripheral lesions, diffuse low-contrast areas and spatial mismatches between masks and images) and discuss preprocessing steps that mitigate them (spatial resampling, intensity normalization, and patch-based training). Finally, we outline practical recommendations for deploying automated segmentation in clinical settings: favor self-configuring frameworks like nnU-Net when compute resources permit, consider lightweight 2D models such as YOLOv8 for fast screening, and ensure rigorous cross-site validation before clinical use.
-}
+\end{abstract}
 
 %\tableofcontents
 %\newpage
 
 
-\section{Introduction} 
-\label{sec:introduction}
+\section{Introduction}\label{sec:introduction}
 
 Ischemic stroke remains a leading cause of death and long-term disability worldwide, imposing substantial clinical and economic burdens on healthcare systems. Rapid and accurate identification of ischemic lesions is critical to guide acute management and rehabilitation planning. In routine clinical practice, Fluid-Attenuated Inversion Recovery (FLAIR) MRI is frequently acquired because it enhances the conspicuity of edema and chronic infarcts without the need for intravenous contrast. Its wide availability across scanners and centers makes FLAIR an attractive input for automated analysis pipelines.
 
@@ -77,7 +78,7 @@ However, FLAIR images pose considerable challenges for automated interpretation.
 
 Deep learning (DL), especially convolutional neural networks (CNNs), has substantially advanced medical image segmentation by learning hierarchical features directly from data, reducing the need for manual feature engineering. Architectures such as U-Net and its 3D variants are widely used baselines, while frameworks like nnU-Net demonstrate that automated protocol selection and self-configuration frequently outperform manually tuned pipelines on heterogeneous medical datasets~\cite{Isensee2021}. Concurrently, lightweight and real-time capable models originally developed for natural images (for example, recent YOLO variants) have been adapted for segmentation tasks, offering favourable inference speed that can be important in time-sensitive clinical workflows.
 
-Despite these advances, controlled comparisons across fundamentally different paradigms—manual 3D models, self-configuring medical frameworks, and adapted 2D real-time models—are limited for ischemic stroke segmentation on non-contrast FLAIR data. Understanding trade-offs between accuracy, robustness and inference efficiency in clinically realistic settings requires systematic evaluation under matched preprocessing and evaluation protocols.
+Despite these advances, controlled comparisons across fundamentally different para\-digms—manual 3D models, self-configuring medical frameworks, and adapted 2D real-time models—are limited for ischemic stroke segmentation on non-contrast FLAIR data. Understanding trade-offs between accuracy, robustness and inference efficiency in clinically realistic settings requires systematic evaluation under matched preprocessing and evaluation protocols.
 
 In this work, we present a reproducible and controlled comparison of three representative strategies for ischemic lesion segmentation on non-contrast FLAIR MRI: (i) a manually configured 3D U-Net, (ii) the self-adapting nnU-Net framework (3D full-resolution), and (iii) a YOLOv8-based segmentation variant adapted to slice-wise FLAIR inputs. All models are trained and evaluated on the ISLES 2022 public dataset (N = 250) using identical preprocessing steps (spatial resampling, intensity normalization and mask alignment), matched data splits, and common evaluation metrics to minimize sources of bias.
 
@@ -377,8 +378,7 @@ Qualitative results demonstrated that nnU-Net effectively captured lesion bounda
 \begin{figure}[tp]    
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 4.jpg}
-    \caption{Qualitative Results: nnU-Net Segmentations. The left side shows a high-performing test case (Dice = 0.824), while the right side presents a moderate case (Dice = 0.480). Each case includes axial views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red) of the lesion. The model accurately captures lesion boundaries in both cases, demonstrating its robustness across varying lesion characteristics.}
-    \label{fig:nnunet_qualitative}
+    \caption{Qualitative Results: nnU-Net Segmentations. The left side shows a high-performing test case (Dice = 0.824), while the right side presents a moderate case (Dice = 0.480). Each case includes axial views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red) of the lesion. The model accurately captures lesion boundaries in both cases, demonstrating its robustness across varying lesion characteristics.}\label{fig:nnunet_qualitative}
 \end{figure}
 
 %\subsection{YOLOv8 Results} \label{subsec:yolov8}
