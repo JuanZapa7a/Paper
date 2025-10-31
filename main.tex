@@ -328,7 +328,6 @@ Qualitative examples of the model outputs are presented in Figure~\ref{fig:unet_
 \begin{table}[tp]
 \centering
 \caption{Performance metrics (mean $\pm$ SD) on the test set (N=25) for the three compared models. The U-Net model achieved a mean Dice coefficient of 0.294 and an IoU of 0.207, with considerable variability across cases, as indicated by the standard deviation. The nnU-Net and YOLOv8 models demonstrated improved performance, with mean Dice coefficients of 0.483 and 0.476, respectively, and IoU values of 0.362 and 0.358. These results highlight the advantages of automated configuration and real-time segmentation approaches over the classical U-Net architecture in this ischemic stroke lesion segmentation task.}\label{tab:comparative_metrics}
-\label{tab:comparative_metrics}
 \begin{tabular}{lcc}
 \toprule
 Model & Dice & IoU \\
@@ -343,8 +342,7 @@ YOLOv8-seg     & $0.476 \pm 0.287$ & $0.358 \pm 0.254$ \\
 \begin{figure}[tp]
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 2.jpg}
-    \caption{Qualitative Results: 3D U-Net Segmentations. The half-left side shows the best-performing test case (Dice = 0.811), while the half-right side presents an intermediate case (Dice = 0.342). Each case includes axial and 3D views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red) of the lesion. The model accurately captures lesion boundaries in the best case although struggles with diffuse regions in the intermediate case.}
-    \label{fig:unet_qualitative}
+    \caption{Qualitative results of 3D U-Net segmentations. The two columns on the left correspond to the best-performing test case (Dice = 0.811), while those on the right illustrate an intermediate case (Dice = 0.342). In each example, the upper row displays 3D renderings of the lesion within the brain volume, and the lower row shows axial FLAIR slices with the ground truth mask (green) and predicted segmentation (red). The network accurately delineates the lesion boundaries in the best case, whereas performance decreases for more diffuse lesions in the intermediate example.}\label{fig:unet_qualitative}
 \end{figure}
 
 %\subsection{nnU-Net Results} \label{subsec:nnu-net}  
@@ -378,18 +376,19 @@ Qualitative results demonstrated that nnU-Net effectively captured lesion bounda
 \begin{figure}[tp]    
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 4.jpg}
-    \caption{Qualitative Results: nnU-Net Segmentations. The left side shows a high-performing test case (Dice = 0.824), while the right side presents a moderate case (Dice = 0.480). Each case includes axial views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red) of the lesion. The model accurately captures lesion boundaries in both cases, demonstrating its robustness across varying lesion characteristics.}\label{fig:nnunet_qualitative}
+    \caption{Qualitative results of nnU-Net segmentations. The two columns on the left correspond to a high-performing test case (Dice = 0.824), and the two columns on the right correspond to a moderate case (Dice = 0.480). For each case, the upper row shows 3D renderings of the lesion overlaid on the brain volume, and the lower row shows axial FLAIR slices with the ground truth (green) and predicted segmentation (red) masks. The model accurately delineates lesion boundaries in both examples, demonstrating robustness across varying lesion sizes and appearances.}\label{fig:nnunet_qualitative}
 \end{figure}
 
 %\subsection{YOLOv8 Results} \label{subsec:yolov8}
 
-The YOLOv8-seg model was trained for 100 epochs, with training and validation loss curves shown in Figure~\ref{fig:yolov8_loss_curve}. The loss curves showed rapid convergence after 50 epochs. The model achieved a mean Average Precision (mAP) of 0.512 on the validation set. The YOLOv8 segmentation variant was trained on 2D FLAIR slices, which were reconstructed into 3D volumes for evaluation. Test set results, including Dice coefficient, IoU, precision, and recall, are summarized in the third row of Table~\ref{tab:comparative_metrics} and in Table~\ref{tab:yolov8_detection_metrics}.
+The YOLOv8-seg model was trained for 100 epochs %, with training and validation loss curves shown in Figure~\ref{fig:yolov8_loss_curve}. The loss curves 
+showing a rapid convergence after 50 epochs. The model achieved a mean Average Precision (mAP) of 0.512 on the validation set. The YOLOv8 segmentation variant was trained on 2D FLAIR slices, which were reconstructed into 3D volumes for evaluation. Test set results, including Dice coefficient, IoU, precision, and recall, are summarized in the third row of Table~\ref{tab:comparative_metrics} and in Table~\ref{tab:yolov8_detection_metrics}.
 %
-\begin{figure}[tp]
-    \centering
-    \includegraphics[width=.7\textwidth]{figures/Figure 5.jpg}
-    \caption{Training and validation loss curves for the YOLOv8-seg model over 100 epochs. The training loss (blue) decreases rapidly, while the validation Dice coefficient (orange) improves and stabilizes around epoch 50, indicating convergence.}\label{fig:yolov8_loss_curve}
-\end{figure}
+% \begin{figure}[tp]
+%     \centering
+%     \includegraphics[width=.7\textwidth]{figures/Figure 5.jpg}
+%     \caption{Training and validation loss curves for the YOLOv8-seg model over 100 epochs. The training loss (blue) decreases rapidly, while the validation Dice coefficient (orange) improves and stabilizes around epoch 50, indicating convergence.}\label{fig:yolov8_loss_curve}
+% \end{figure}
 %
 % \begin{table}[tp]
 % \centering
@@ -422,7 +421,7 @@ mAP@0.5:0.95 & $0.073 \pm 0.014$ \\
 \begin{figure}[tp]
     \centering
     \includegraphics[width=\textwidth]{figures/Figure 6.jpg}
-    \caption{Qualitative Results: YOLOv8 Segmentations. The left side shows a high-performing test case (Dice = 0.792), while the right side presents a moderate case (Dice = 0.365). Each case includes axial, sagittal, and coronal views of the FLAIR image with overlaid ground truth (green) and predicted segmentation (red), as well as a 3D rendering of the lesion. The model captures major lesion areas but may miss finer details compared to 3D models.}\label{fig:yolov8_qualitative}
+    \caption{Qualitative results of YOLOv8 segmentations. The two columns on the left correspond to the best-performing test case (Dice = 0.792), and the two on the right to a moderate case (Dice = 0.365). For each example, the upper row displays 3D renderings of the lesion on the brain surface, while the lower row shows axial FLAIR slices with ground truth (green) and predicted segmentation (red). The network effectively identifies the main lesion regions but tends to overlook smaller or diffuse structures compared with 3D models.}\label{fig:yolov8_qualitative}
 \end{figure}
 
 
