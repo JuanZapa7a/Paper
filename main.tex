@@ -41,6 +41,33 @@
 
 % \author{Patricia García-Berlanga\thanks{Universidad Politécnica de Cartagena, patricia.garciab@edu.upct.es} \and Juan Zapata\thanks{Universidad Politécnica de Cartagena, juan.zapata@upct.es} \and  Pablo Hernández-Cerdán\thanks{Vasomaly, pablo.hernandez@vasomaly.com} \and Juan Martínez-Alajarín\thanks{Universidad Politécnica de Cartagena, juanc.martinez@upct.es}}
 
+%  Buenas tardes.
+
+% He revisado las guidelines de la revista y estas son las pequeñas modificaciones que debemos hacer para seguir todas las recomendaciones:
+
+%     En la guía se especifica: "Title page should include paper title, author(s) full name and affiliation, corresponding author(s) names complete affiliation/address, along with phone, fax and email.". Por lo tanto, nos faltaría completar las afiliaciones según en formato que nos envió Juan y añadir también número de teléfono y email. Por cierto, Pablo me contestó que su nombre para publicar es Pablo Hernandez-Cerdan, sin tildes, y que pusiéramos su correo público que es pablo.hernandez.cerdan@outlook.com.
+
+%     El abstract no debe tener más de 250 palabras (las sobrepasamos un poco) y además debe estar estructurado con diferentes subtítulos, que pueden ir dentro del mismo párrafo en línea y en negrita. Los subtítulos recomendados son Introduction/Objective, Methods, Results, Discussion y Conclusion, aunque indica que pueden variar.
+
+%      Se piden 6-8 keywords, preferiblemente coincidentes con los temas del título, que aparezcan justo debajo del resumen.
+
+%     Hay que añadir una sección llamada Ethics Approval and Consent to Participate, donde se confirme que el estudio cumple las normas éticas. En este caso, como el dataset es público y estña anonimizado, no se requiere consentimiento, pero es conveniente aclararlo. Por ejemplo, podría escribirse esto: "This study was conducted using the publicly available ISLES 2022 dataset, which was collected and distributed in accordance with relevant ethical standards and anonymized prior to release. Therefore, additional ethical approval and informed consent were not required."
+
+%     Es necesario añadir una sección llamada Conflict of Interest antes de las referencias, en la que se incluya una confirmación de que efectivamente no hay conflicto de intereses. El ejemplo que aparece es “The author(s) confirm(s) that there is no conflict of interest related to the manuscript.”. Además, hay que rellenar y entregar también un Disclosure Form (adjunto), aunque esto es más bien documentación que hay que entregar.
+
+
+% En cuanto al tipo de documento, aparecen diferentes clasificaciones (https://www.benthamscience.com/pages/author-guidelines). La que más se ajusta al nuestro es Research Article, pero se especifica que deben incluir 75 o más referencias. Como solo tenemos 25, creo que también encajaría en Short Communications ("Short Communications are concise articles that present significant findings or innovative ideas in a brief and focused format. They are intended to communicate preliminary results, novel methods, or theoretical advancements that may not require the extensive background, methodology, and discussion of a full-length research article. Short communications should be 2000-3000 words with 25 or more references excluding figures, structures, photographs, schemes, tables, etc."). No sé qué opináis al respecto.
+
+% Teniendo todo esto en cuenta, la documentación a entregar sería:
+
+%     Manuscrito principal, en Word o LaTeX.
+%     Figuras y tablas por separado. Las figuras en TIFF, PNG o JPEG, y las tablas en Microsoft Word table format.
+%     El Disclosure Form.
+%     Una Copyright Letter (la adjunto también).
+
+
+% Esto sería todo. Una vez que se hagan esos cambios y se rellenen los documentos pertinentes ya podría iniciarse el proceso. ¿Hemos recibido contestación respecto a los plazos?
+
 \author{
   Patricia García-Berlanga$^{1}$\thanks{Corresponding author: patricia.garciab@edu.upct.es} \and
   Juan Martínez-Alajarii$^{1}$ \and
@@ -83,6 +110,8 @@ We report quantitative performance using Dice similarity coefficient and Interse
 %
 Beyond numerical metrics, we qualitatively examine typical failure modes (small peripheral lesions, diffuse low-contrast areas and spatial mismatches between masks and images) and discuss preprocessing steps that mitigate them (spatial resampling, intensity normalization, and patch-based training). Finally, we outline practical recommendations for deploying automated segmentation in clinical settings: favor self-configuring frameworks like nnU-Net when compute resources permit, consider lightweight 2D models such as YOLOv8 for fast screening, and ensure rigorous cross-site validation before clinical use.
 \end{abstract}
+
+\noindent\textbf{Keywords:} Stroke lesion segmentation, Non-contrast MRI,  Automated diagnosis, Clinical deployment, FLAIR MRI, Medical image analysis.
 
 %\tableofcontents
 %\newpage
