@@ -70,8 +70,8 @@
 
 \author{
   Patricia García-Berlanga$^{1}$\thanks{Corresponding author: patricia.garciab@edu.upct.es} \and
-  Juan Martínez-Alajarii$^{1}$ \and
-  Juan Zapata$^{1}$ \and
+  Juan Zapata$^{1}$ \and 
+  Juan Martinez-Alajarin$^{1}$ \and
   Pablo Hernandez-Cerdan$^{2}$
   }
 
@@ -79,8 +79,9 @@
   \small $^{1}$Universidad Politécnica de Cartagena, \\
   \small member of European University of Technology EUT+,\\
   \small ETSII, C/ Dr. Fleming, s/n, 30202 Cartagena, Spain\\[0.5em]
-  \small $^{2}$Vasomaly, Spain\\[1em]
-  \today
+  \small $^{2}$Vasomaly, Avenida Fontes 15, Torre-Pacheco,\\ 
+  \small 30700, Murcia, Spain\\[1em]
+  %\today
 }
 
 
@@ -451,7 +452,7 @@ showing a rapid convergence after 50 epochs. The model achieved a mean Average P
 % \end{table}
 %
 \begin{table}[tp]
-\centering
+\centering\caption{Performance Metrics: YOLOv8 on the Test Set (N=25). The model achieved a mean Average Precision (mAP) of 0.202 at IoU threshold 0.5 and 0.073 at IoU thresholds from 0.5 to 0.95, indicating its effectiveness in detecting ischemic lesions with reasonable precision and recall.}\label{tab:yolov8_detection_metrics}
 \begin{tabular}{lc}
 \toprule
 Metric & Mean $\pm$ SD \\
@@ -462,7 +463,6 @@ mAP@0.5 & $0.202 \pm 0.034$ \\
 mAP@0.5:0.95 & $0.073 \pm 0.014$ \\
 \bottomrule
 \end{tabular}
-\caption{Performance Metrics: YOLOv8 on the Test Set (N=25). The model achieved a mean Average Precision (mAP) of 0.202 at IoU threshold 0.5 and 0.073 at IoU thresholds from 0.5 to 0.95, indicating its effectiveness in detecting ischemic lesions with reasonable precision and recall.}\label{tab:yolov8_detection_metrics}
 \end{table}
 
 \begin{figure}[tp]
@@ -477,7 +477,8 @@ mAP@0.5:0.95 & $0.073 \pm 0.014$ \\
 In summary, the three models demonstrated varying levels of performance in ischemic lesion segmentation from FLAIR MRI images. The U-Net model provided a baseline with moderate accuracy but exhibited significant variability across cases. The nnU-Net outperformed the classical U-Net by leveraging automated configuration, achieving higher Dice and IoU scores with improved robustness. YOLOv8, while originally designed for object detection, delivered competitive segmentation results with the added benefit of rapid inference times, making it suitable for real-time applications. A comparative overview of the three architectures is provided in Table~\ref{tab:comparison}. This table shows that the nnU-Net achieved the highest Dice and IoU values across all patient cases, followed by YOLOv8 and U-Net. These quantitative findings confirm the influence of model design and dimensionality on segmentation accuracy.
 
 \begin{table}[tp]
-\centering
+  \centering\caption{Comparison of segmentation models on the test set (N=25). The nnU-Net achieved the highest Dice and IoU scores, indicating superior segmentation accuracy and robustness. YOLOv8 provided competitive performance with efficient inference, while U-Net showed limited generalization capabilities.}
+\label{tab:comparison}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lccc}
 \toprule
@@ -489,8 +490,6 @@ YOLOv8 & $0.476 \pm 0.287$ & $0.358 \pm 0.254$ & Fastest inference; lower bounda
 \bottomrule
 \end{tabular}
 }
-\caption{Comparison of segmentation models on the test set (N=25). The nnU-Net achieved the highest Dice and IoU scores, indicating superior segmentation accuracy and robustness. YOLOv8 provided competitive performance with efficient inference, while U-Net showed limited generalization capabilities.}
-\label{tab:comparison}
 \end{table}
 
 \section{Discussion}\label{sec:discussion}
@@ -544,10 +543,10 @@ This study was conducted using the publicly available ISLES 2022 dataset, which 
 The authors confirm that there is no conflict of interest related to the manuscript.
 
 \section*{Acknowledgments}
-The authors would like to thank the providers of the ISLES 2022 dataset for making this valuable resource publicly available, which greatly facilitated this research. We also acknowledge the support of our institution's computational resources that enabled the training and evaluation of the deep learning models presented in this study.
+The authors would like to thank the providers of the ISLES 2022 dataset for making this valuable resource publicly available, which greatly facilitated this research. We also acknowledge the support of our institution's computational resources that enabled the training and evaluation of the deep learning models presented in this study. The authors would also like to acknowledge Vasomaly for their technical support and valuable insights that contributed to the successful completion of this work
 % agradecer a algun proyecto de financiacion si es necesario
 % \section*{Funding}
-This work was supported by the Spanish Ministry of Science, Innovation and Universities under grant PID2021-128009OB-C33 funded by MCIN/AEI/10.13039/501100011033/FEDER, UE, which provided essential resources for data processing and model training. 
+This work was supported by the Spanish Ministry of Science, Innovation and Universities under grant PID2021-128009OB-C33 funded by MCIN/AEI/10.13039/501100011033/FEDER, UE, which provided essential resources for data processing and model training.
 
 
 
